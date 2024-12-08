@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toll Station Passes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+        }
+        .result {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Toll Station Passes</h1>
+
+    <!-- Form to Input Parameters -->
+    <div class="form-section">
+        <label for="tollStationID">Toll Station ID:</label>
+        <input type="text" id="tollStationID" placeholder="e.g., NAO30">
+        <br>
+        <label for="date_from">Date From (YYYYMMDD):</label>
+        <input type="text" id="date_from" placeholder="e.g., 20220101">
+        <br>
+        <label for="date_to">Date To (YYYYMMDD):</label>
+        <input type="text" id="date_to" placeholder="e.g., 20220107">
+        <br>
+        <button id="fetchButton">Fetch Passes</button>
+    </div>
+
+    <!-- Results Section -->
+    <div id="result" class="result">
+        <h2>Results</h2>
+        <pre id="output"></pre>
+    </div>
+
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', async () => {
+            const tollStationID = document.getElementById('tollStationID').value;
+            const date_from = document.getElementById('date_from').value;
+            const date_to = document.getElementById('date_to').value;
+            
+            const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMzNjkzNTgyLCJleHAiOjE3MzM2OTcxODJ9.65U7tHzjWm1FLUcIVFem5ZQSLn5Q98xRRmwg-ER04hY` // Replace YOUR_TOKEN with a valid token
+
+            const output = document.getElementById('output');
+            output.textContent = ''; // Clear previous output
+    
+            // Log the values being used
+            console.log("Toll Station ID:", tollStationID);
+            console.log("Date From:", date_from);
+            console.log("Date To:", date_to);
+    
+            // Input validation
+            if (!tollStationID || !date_from || !date_to) {
+                output.textContent = 'Please fill all fields.';
+                output.classList.add('error');
+                return;
+            }
+    
+            const apiUrl = `http://localhost:9115/api/tollStationPasses/${tollStationID}/${date_from}/${date_to}`;
+            console.log("API URL:", apiUrl);
+    
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'x-observatory-auth': token
+                    },
+                });
+    
+                console.log("Response status:", response.status);
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                console.log("API Response Data:", data);
+    
+                // Format and display data
+                output.classList.remove('error');
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                output.textContent = `Error: ${error.message}`;
+                output.classList.add('error');
+            }
+        });
+    </script>
+    
+</body>
+</html>

@@ -190,3 +190,32 @@ export const getPassesCost = async (req: Request, res: Response) => {
     }
 
 };
+
+
+
+export const getTollStations = async (req: Request, res: Response) => {
+    console.log("Route hit: /TollStations/:tollOpID");
+    const { tollOpID  } = req.params;
+    
+    console.log("Toll Operator ID received:", tollOpID);
+
+    try {
+        const stations = await Station.find({
+            where: { operator: { id: tollOpID  } },
+        });
+
+        console.log("Toll stations found:", stations);
+        
+        
+        res.status(200).json(stations.map(station => ({
+            id: station.id,
+            name: station.name,
+        })));
+
+    } catch (error) 
+    {
+        console.error('Error fetching toll stations:', error);
+        res.status(500).json({ error: 'Failed to fetch toll stations' });
+    }
+};
+
