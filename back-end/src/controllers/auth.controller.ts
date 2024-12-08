@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import {User} from "../entities/user.entity";
 
 const secretKey = process.env.JWT_SECRET || 'your_secret_key';
 const tokenExpiry = '1h';
@@ -14,28 +15,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const users = [
-            // this will be replaced with a database query later
-            {
-                username: 'admin',
-                passwordHash: '$2a$12$eFRUN.kWYtcCI7Caj8SQI.I1jAGBKRCYOKb04MSCXt1XzM7RZPOc6', // admin
-                role: 'admin'
-            },
-            {
-                username: 'user',
-                passwordHash: '$2a$12$J6ymq/1XycanVrnVW8bf7uAqP2kCdKP0u3iHddOrV1buUDelQK9ke', // user
-                role: 'user'
-            }
-        ]
-
-        const user = users.find(u => u.username === username);
-
-        if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+        const user = await User.findOneBy({ username });
+        console.log(user);
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             res.status(401).json({ message: 'Invalid username or password' });
             return;
         }
 
-        const token = jwt.sign({ username: user.username, role: user.role }, secretKey, { expiresIn: tokenExpiry });
+        const token = jwt.sign({ username: user.username, role: user.isAdmin ? "admin" : "user" }, secretKey, { expiresIn: tokenExpiry });
         res.status(200).json({ token });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
