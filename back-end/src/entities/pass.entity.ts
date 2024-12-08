@@ -7,7 +7,7 @@ export class Pass extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'float' })
   charge: number;
 
   @Column()

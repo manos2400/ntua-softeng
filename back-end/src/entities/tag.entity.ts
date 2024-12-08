@@ -1,12 +1,11 @@
-import {BaseEntity, Entity, ManyToOne, OneToMany} from "typeorm";
-import { PrimaryGeneratedColumn } from "typeorm";
+import {BaseEntity, Entity, ManyToOne, OneToMany, PrimaryColumn} from "typeorm";
 import { Pass } from "./pass.entity";
 import { Operator } from "./operator.entity";
 
 @Entity()
 export class Tag extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryColumn()
+    id: string;
 
     @ManyToOne(() => Operator, operator => operator.tags)
     operator: Operator;
