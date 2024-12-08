@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { Pass } from '../entities/pass.entity';
 import { Station } from '../entities/station.entity';
-import { Between } from 'typeorm';
+import { Operator } from '../entities/operator.entity';
+import { Not, Between } from 'typeorm';
 
 export const getTollStationPasses = async (req: Request, res: Response) => {
     const { tollStationID, date_from, date_to } = req.params;
@@ -13,7 +14,7 @@ export const getTollStationPasses = async (req: Request, res: Response) => {
     try{
             const passes = await Pass.find({
                 where: {
-                    // Filter by station ID
+                    // Filter by station ID and date range
                     station: { id: tollStationID }, 
                     timestamp: Between(new Date(periodFrom), new Date(periodTo)), // Filter by date range
                 },
@@ -40,28 +41,152 @@ export const getTollStationPasses = async (req: Request, res: Response) => {
             }
 
             res.status(200).json(response);
-    } catch {
-        console.error('Error fetching toll station passes:');
+    } catch (error) {
+        console.error('Error fetching toll station passes:', error);
         res.status(500).json({ error: 'Failed to fetch data' });
     }
-    // Placeholder: Implement logic to get toll station passes
-    //res.status(200).json({ message: `Fetched passes for ${tollStationID}` });
+    
 };
 
-export const getPassAnalysis = (req: Request, res: Response) => {
+export const getPassAnalysis = async (req: Request, res: Response) => {
     const { stationOpID, tagOpID, date_from, date_to } = req.params;
-    // Placeholder: Implement logic to analyze passes
-    res.status(200).json({ message: `Analyzed passes for ${stationOpID} and ${tagOpID}` });
-}
 
-export const getChargesBy = (req: Request, res: Response) => {
+    const periodFrom = `${date_from.slice(0, 4)}-${date_from.slice(4, 6)}-${date_from.slice(6, 8)}`;
+    const periodTo = `${date_to.slice(0, 4)}-${date_to.slice(4, 6)}-${date_to.slice(6, 8)}`;
+
+    try {
+        
+        const passes = await Pass.find({
+            where: {
+                // Filter by station ID, tagOpID and date range
+                station: { operator: { id: stationOpID } }, 
+                tag: { operator: { id: tagOpID } }, 
+                timestamp: Between(new Date(periodFrom), new Date(periodTo)), 
+            },
+            relations: ['tag', 'station'], // Fetch related data
+        });
+
+        // Response 
+        const response = {
+            stationOpID,
+            tagOpID,
+            requestTimestamp: new Date().toISOString(),
+            periodFrom,
+            periodTo,
+            n_passes: passes.length,
+            passList: passes.map((pass, index) => ({
+                passIndex: index + 1, // Sequential numbering
+                passID: pass.id,
+                stationID: pass.station.id,
+                timestamp: pass.timestamp.toISOString(),
+                tagID: pass.tag.id,
+                passCharge: pass.charge,
+            })),
+        };
+
+        // Response the json file
+        res.status(200).json(response);
+    } catch (error) {
+        console.error('Error analyzing passes:', error);
+        res.status(500).json({ error: 'Failed to analyze passes' });
+    }
+    
+};
+
+export const getChargesBy = async (req: Request, res: Response) => {
     const { tollOpID, date_from, date_to } = req.params;
-    // Placeholder: Implement logic to get charges by toll operator
-    res.status(200).json({ message: `Fetched charges for ${tollOpID}` });
-}
+    
+    const periodFrom = `${date_from.slice(0, 4)}-${date_from.slice(4, 6)}-${date_from.slice(6, 8)}`;
+    const periodTo = `${date_to.slice(0, 4)}-${date_to.slice(4, 6)}-${date_to.slice(6, 8)}`;
 
-export const getPassesCost = (req: Request, res: Response) => {
+   try {
+
+    const passes = await Pass.find({
+        where: {
+            // Filter by tollOPID, exclude the tolls of the OP and date range
+            station: { operator: { id: tollOpID } }, 
+            tag: { operator: { id: Not(tollOpID) } },
+            timestamp: Between(new Date(periodFrom), new Date(periodTo)), 
+        },
+        relations: ['tag', 'station', 'station.operator', 'tag.operator'], // Fetch related data
+    });
+    
+
+    // Group passes by visiting operator (tag.operator.id)
+    const visitingOperators = passes.reduce((acc, pass) => {
+        const visitingOpID = pass.tag.operator.id;
+
+        // Initialize the operator in the accumulator if not present
+        if (!acc[visitingOpID]) {
+            acc[visitingOpID] = { nPasses: 0, passesCost: 0 };
+        }
+
+        // Increment passes count and add the charge
+        acc[visitingOpID].nPasses += 1;
+        acc[visitingOpID].passesCost += pass.charge;
+
+        return acc;
+    }, {} as Record<string, { nPasses: number; passesCost: number }>);
+
+    // Convert grouped operators to a list
+    const vOpList = Object.entries(visitingOperators).map(([visitingOpID, data]) => ({
+        visitingOpID,
+        nPasses: data.nPasses,
+        passesCost: data.passesCost,
+    }));
+
+    // Response
+    const response = {
+        tollOpID,
+        requestTimestamp: new Date().toISOString(),
+        periodFrom,
+        periodTo,
+        vOpList,
+    };
+    // Response the json file
+    res.status(200).json(response);
+   } catch (error) {
+    console.error('Error fetching charges by operators:', error);
+    res.status(500).json({ error: 'Failed to fetch charges by operators' });
+   }
+};
+
+export const getPassesCost = async (req: Request, res: Response) => {
     const { tollOpID, tagOpID, date_from, date_to } = req.params;
-    // Placeholder: Implement logic to calculate passes cost
-    res.status(200).json({ message: `Fetched costs for ${tollOpID} and ${tagOpID}` });
+    
+    const periodFrom = `${date_from.slice(0, 4)}-${date_from.slice(4, 6)}-${date_from.slice(6, 8)}`;
+    const periodTo = `${date_to.slice(0, 4)}-${date_to.slice(4, 6)}-${date_to.slice(6, 8)}`;
+
+    try {
+        
+        const passes = await Pass.find({
+            where: {
+                // Filter by  toll ID, tagOpID and date range
+                station: { operator: { id: tollOpID } }, 
+                tag: { operator: { id: tagOpID } }, 
+                timestamp: Between(new Date(periodFrom), new Date(periodTo)), 
+            },
+            relations: ['tag', 'station', 'station.operator', 'tag.operator'], // Fetch related data
+        });
+        // Calculate total cost
+        const totalCost = passes.reduce((sum, pass) => sum + pass.charge, 0);
+
+        // Response  
+        const response = {
+            tollOpID,
+            tagOpID,
+            requestTimestamp: new Date().toISOString(),
+            periodFrom,
+            periodTo,
+            n_passes: passes.length,
+            passesCost: totalCost,
+        };
+
+        // Response the json file
+        res.status(200).json(response);
+    } catch (error) {
+        console.error('Error analyzing passes:', error);
+        res.status(500).json({ error: 'Failed to analyze passes' });
+    }
+
 };
