@@ -52,7 +52,11 @@ async function callApi(endpoint, method = 'GET', data = null, requiresAuth = fal
             data,
             headers,
         });
-        console.log(JSON.stringify(response.data, null, 2));
+        if(endpoint.endsWith('csv')) {
+            console.log(response.data);
+        } else {
+            console.log(JSON.stringify(response.data, null, 2));
+        }
         return response;
     } catch (error) {
         if (error.response) {
