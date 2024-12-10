@@ -1,0 +1,434 @@
+{
+	"info": {
+		"_postman_id": "72c3b08f-6452-45b2-b457-0dae868d3aa9",
+		"name": "SoftEng",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26437177",
+		"_collection_link": "https://lively-desert-223159.postman.co/workspace/Team-Workspace~0431c260-6a09-46bf-8ed0-9999faad8319/collection/26437177-72c3b08f-6452-45b2-b457-0dae868d3aa9?action=share&source=collection_link&creator=26437177"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "HealthCheck",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/admin/healthcheck",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"admin",
+								"healthcheck"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ResetStations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/admin/resetstations",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"admin",
+								"resetstations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ResetPasses",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/admin/resetpasses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"admin",
+								"resetpasses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddPasses",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/admin/addpasses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"admin",
+								"addpasses"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Services",
+			"item": [
+				{
+					"name": "ChargesBy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/chargesBy/:tollOpID/:date_from/:date_to",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chargesBy",
+								":tollOpID",
+								":date_from",
+								":date_to"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": null,
+									"description": "json ή csv",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "tollOpID",
+									"value": "",
+									"description": "Το ID του λειτουργού του σταθμού διέλευσης"
+								},
+								{
+									"key": "date_from",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (από)"
+								},
+								{
+									"key": "date_to",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (έως)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PassesCost",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/passesCost/:tollOpID/:tagOpID/:date_from/:date_to",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"passesCost",
+								":tollOpID",
+								":tagOpID",
+								":date_from",
+								":date_to"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "",
+									"description": "json ή csv",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "tollOpID",
+									"value": "",
+									"description": "Το ID του λειτουργού του σταθμού διέλευσης"
+								},
+								{
+									"key": "tagOpID",
+									"value": "",
+									"description": "Το ID του λειτουργού που χορήγησε το tag\nδιέλευσης"
+								},
+								{
+									"key": "date_from",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (από)"
+								},
+								{
+									"key": "date_to",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (έως)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PassAnalysis",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/passAnalysis/:stationOpID/:tagOpID/:date_from/:date_to",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"passAnalysis",
+								":stationOpID",
+								":tagOpID",
+								":date_from",
+								":date_to"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "",
+									"description": "json ή csv",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "stationOpID",
+									"value": "",
+									"description": "Το ID του λειτουργού του σταθμού"
+								},
+								{
+									"key": "tagOpID",
+									"value": "",
+									"description": "Το ID του λειτουργού-παρόχου του tag"
+								},
+								{
+									"key": "date_from",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (από)"
+								},
+								{
+									"key": "date_to",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (έως)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TollstationPasses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-observatory-auth",
+								"value": "{{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/tollStationPasses/:tollStationID/:date_from/:date_to",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tollStationPasses",
+								":tollStationID",
+								":date_from",
+								":date_to"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "",
+									"description": "json ή csv",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "tollStationID",
+									"value": "",
+									"description": "Το μοναδικό ID του σημείου διέλευσης"
+								},
+								{
+									"key": "date_from",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (από)"
+								},
+								{
+									"key": "date_to",
+									"value": "",
+									"description": "Η αιτούμενη περίοδος (έως)"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Save JWT token\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.environment.set(\"JWT_TOKEN\", jsonData.token);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{USERNAME}}",
+							"description": "Username",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{PASSWORD}}",
+							"description": "Password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(pm.response.to.have.status(200)) {",
+							"    pm.environment.set(\"JWT_TOKEN\", \"\")",
+							"}",
+							"    ",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-observatory-auth",
+						"value": "{{JWT_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/logout",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
