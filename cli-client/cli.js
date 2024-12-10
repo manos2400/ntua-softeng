@@ -4,6 +4,7 @@ const { Command } = require('commander');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const FormData = require('form-data');
 
 const program = new Command();
 const API_BASE_URL = 'http://localhost:9115/api';
@@ -52,9 +53,10 @@ async function callApi(endpoint, method = 'GET', data = null, requiresAuth = fal
             headers,
         });
         console.log(JSON.stringify(response.data, null, 2));
+        return response;
     } catch (error) {
         if (error.response) {
-            console.error(`Error: ${error.response.status} - ${error.response.data}`);
+            console.error(`Error: ${error.response.status} - ${error.response.data.message}`);
         } else {
             console.error(`Error: ${error.message}`);
         }
@@ -71,24 +73,24 @@ program
 program
     .command('healthcheck')
     .description('Check if the server is running')
-    .action(() => {
-        callApi('/admin/healthcheck');
+    .action(async () => {
+        await callApi('/admin/healthcheck');
     });
 
 // Reset Passes
 program
     .command('resetpasses')
     .description('Reset all toll passes')
-    .action(() => {
-        callApi('/admin/resetpasses', 'POST');
+    .action(async () => {
+        await callApi('/admin/resetpasses', 'POST');
     });
 
 // Reset Stations
 program
     .command('resetstations')
     .description('Reset all toll stations')
-    .action(() => {
-        callApi('/admin/resetstations', 'POST');
+    .action(async () => {
+        await callApi('/admin/resetstations', 'POST');
     });
 
 // Toll Station Passes
@@ -99,9 +101,9 @@ program
     .requiredOption('--from <from>', 'Start date (YYYYMMDD)')
     .requiredOption('--to <to>', 'End date (YYYYMMDD)')
     .option('--format <format>', 'Output format (csv or json)', 'json')
-    .action((options) => {
+    .action(async (options) => {
         const { station, from, to, format } = options;
-        callApi(`/tollStationPasses/${station}/${from}/${to}?format=${format}`, 'GET', null, true);
+        await callApi(`/tollStationPasses/${station}/${from}/${to}?format=${format}`, 'GET', null, true);
     });
 
 // Login
@@ -112,20 +114,9 @@ program
     .requiredOption('--passw <password>', 'Password')
     .action(async (options) => {
         const { username, passw } = options;
-        try {
-            const response = await axios.post(`${API_BASE_URL}/login`, { username, password: passw });
-            const { token } = response.data;
-            if (token) {
-                saveToken(token);
-            } else {
-                console.error('Error: No token received from server.');
-            }
-        } catch (error) {
-            if (error.response) {
-                console.error(`Error: ${error.response.status} - ${error.response}`);
-            } else {
-                console.error(`Error: ${error.message}`);
-            }
+        const response = await callApi('/login', 'POST', { username, password: passw })
+        if (response && response.data && response.data.token) {
+            saveToken(response.data.token);
         }
     });
 
@@ -152,14 +143,14 @@ program
     .option('--source <file>', 'Path to the CSV file for adding passes')
     .option('--username <username>', 'Username for usermod')
     .option('--passw <password>', 'Password for usermod')
-    .action((options) => {
+    .action(async (options) => {
         const { usermod, users, addpasses } = options;
 
         if(usermod) {
             const { username, passw } = options;
-            callApi('/admin/users', 'POST', { username, password: passw }, true);
+            await callApi('/admin/users', 'POST', { username, password: passw }, true);
         } else if (users) {
-            callApi('/admin/users', 'GET', null, true);
+            await callApi('/admin/users', 'GET', null, true);
         } else if (addpasses) {
             const {source} = options;
 
@@ -168,8 +159,6 @@ program
                 return;
             }
 
-            const fs = require('fs');
-
             // Read the CSV file
             fs.readFile(source, 'utf8', (err, data) => {
                 if (err) {
@@ -177,7 +166,7 @@ program
                     return;
                 }
                 //pass the csv as content type: multipart/form-data and mime type: 'text/csv'
-                const FormData = require('form-data');
+
                 const formData = new FormData();
                 formData.append('file', data, {
                     filename: source,
