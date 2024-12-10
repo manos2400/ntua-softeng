@@ -16,7 +16,7 @@ app.use(cors());
 
 // API Routes
 app.use('/api', authRoutes);
-app.use('/api/admin', authMiddleware, roleMiddleware('admin'), adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api', authMiddleware, servicesRoutes);
 
 

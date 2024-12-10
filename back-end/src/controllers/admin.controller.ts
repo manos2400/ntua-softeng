@@ -92,7 +92,7 @@ export const resetPasses = async (req: Request, res: Response) => {
 
 export const addPasses = async (req: Request, res: Response) => {
     try {
-        const passesData = fs.readFileSync(__dirname + '/../data/passes-sample.csv', 'utf-8');
+        const passesData = req.body.passes;
         const passes = passesData.split('\n');
 
         passes.shift(); // remove the header
@@ -138,3 +138,41 @@ export const addPasses = async (req: Request, res: Response) => {
         res.status(500).json({ status: 'failed', info: error });
     }
 };
+
+export const getUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await User.find();
+
+        const usernames = users.map(user => user.username);
+
+        res.status(200).json(usernames);
+    } catch (error) {
+        res.status(500).json({ status: 'failed', info: error });
+    }
+}
+
+export const userMod = async (req: Request, res: Response) => {
+    try {
+        const { username, password } = req.body;
+
+        if (!username || !password) {
+            res.status(400).json({ message: 'Username and password are required' });
+            return;
+        }
+
+        let user = await User.findOneBy({ username });
+
+        if (!user) {
+            user = new User();
+            user.username = username;
+        }
+
+        user.password = await bcrypt.hash(password, 12);
+        user.isAdmin = false;
+        await user.save();
+
+        res.status(200).json({ status: 'OK' });
+    } catch (error) {
+        res.status(500).json({ status: 'failed', info: error });
+    }
+}
