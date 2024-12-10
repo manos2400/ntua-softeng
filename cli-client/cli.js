@@ -110,6 +110,47 @@ program
         await callApi(`/tollStationPasses/${station}/${from}/${to}?format=${format}`, 'GET', null, true);
     });
 
+// Charges By
+program
+    .command('chargesby')
+    .description('Get charges from all other tag operators for a specific period')
+    .requiredOption('--opid <operator id>', 'Operator ID')
+    .requiredOption('--from <from>', 'Start date (YYYYMMDD)')
+    .requiredOption('--to <to>', 'End date (YYYYMMDD)')
+    .option('--format <format>', 'Output format (csv or json)', 'json')
+    .action(async (options) => {
+        const { from, to, format, opid } = options;
+        await callApi(`/chargesBy/${opid}/${from}/${to}?format=${format}`, 'GET', null, true);
+    });
+
+// Passes Cost
+program
+    .command('passescost')
+    .description('Get the cost of passes performed by a specific tag operator in the road of another operator')
+    .requiredOption('--stationop <operator id>', 'Station Operator ID')
+    .requiredOption('--tagop <operator id>', 'Tag Operator ID')
+    .requiredOption('--from <from>', 'Start date (YYYYMMDD)')
+    .requiredOption('--to <to>', 'End date (YYYYMMDD)')
+    .option('--format <format>', 'Output format (csv or json)', 'json')
+    .action(async (options) => {
+        const { from, to, format, stationop, tagop } = options;
+        await callApi(`/passesCost/${stationop}/${tagop}/${from}/${to}?format=${format}`, 'GET', null, true);
+    });
+
+// Pass Analysis
+program
+    .command('passanalysis')
+    .description('Get the analysis of passes performed by a specific tag operator in the road of another operator')
+    .requiredOption('--stationop <operator id>', 'Station Operator ID')
+    .requiredOption('--tagop <operator id>', 'Tag Operator ID')
+    .requiredOption('--from <from>', 'Start date (YYYYMMDD)')
+    .requiredOption('--to <to>', 'End date (YYYYMMDD)')
+    .option('--format <format>', 'Output format (csv or json)', 'json')
+    .action(async (options) => {
+        const { from, to, format , stationop, tagop} = options;
+        await callApi(`/passAnalysis/${stationop}/${tagop}/${from}/${to}?format=${format}`, 'GET', null, true);
+    });
+
 // Login
 program
     .command('login')
