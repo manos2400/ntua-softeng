@@ -408,9 +408,52 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  stationOpID:
+                    type: string
+                    example: AM
+                  tagOpID:
+                    type: string
+                    example: EG
+                  requestTimestamp:
+                    type: string
+                    example: 2021-05-01T12:00:00Z
+                  periodFrom:
+                    type: string
+                    example: 2021-05-01 00:00
+                  periodTo:
+                    type: string
+                    example: 2021-06-01 23:59
+                  n_passes:
+                    type: integer
+                    example: 150
+                  passList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        passIndex:
+                          type: integer
+                          example: 1
+                        passID:
+                          type: string
+                          example: 3030
+                        stationID:
+                          type: string
+                          example: AM01
+                        timestamp:
+                          type: string
+                          example: 2021-05-01T12:00:00Z
+                        tagID:
+                          type: string
+                          example: NAOP0J43D5
+                        passCharge:
+                          type: number
+                          example: 2
             text/csv:
               schema:
                 type: string
+                example: stationOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passID,stationID,timestamp,tagID,passCharge
         '400':
           description: At least one of the operator IDs given where invalid.
           content:
@@ -471,9 +514,32 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                    tollOpID:
+                        type: string
+                        example: AM
+                    tagOpID:
+                        type: string
+                        example: EG
+                    requestTimestamp:
+                        type: string
+                        example: 2021-05-01T12:00:00Z
+                    periodFrom:
+                        type: string
+                        example: 2021-05-01 00:00
+                    periodTo:
+                        type: string
+                        example: 2021-06-01 23:59
+                    n_passes:
+                        type: integer
+                        example: 150
+                    passesCost:
+                        type: number
+                        example: 300
             text/csv:
               schema:
                 type: string
+                example: tollOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passesCost
         '500':
           description: Error retrieving cost.
 
@@ -517,9 +583,37 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                    tollOpID:
+                        type: string
+                        example: AM
+                    requestTimestamp:
+                        type: string
+                        example: 2021-05-01T12:00:00Z
+                    periodFrom:
+                        type: string
+                        example: 2021-05-01 00:00
+                    periodTo:
+                        type: string
+                        example: 2021-06-01 23:59
+                    vOpList:
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                visitingOpID:
+                                    type: string
+                                    example: EG
+                                nPasses:
+                                    type: integer
+                                    example: 150
+                                passesCost:
+                                    type: number
+                                    example: 300
             text/csv:
               schema:
                 type: string
+                example: tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,nPasses,passesCost
         '500':
           description: Error retrieving charges.
   /api/login:
