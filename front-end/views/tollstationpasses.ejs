@@ -1,0 +1,100 @@
+<%- include('modules/top') %>
+
+
+<title>Toll Station Passes | TollNet Solutions</title>
+
+</head><body style="text-align:center;">
+
+	<%- include('modules/header') %>
+
+<main>
+
+	<div class="content">
+		
+		
+		<h1>Toll Station Passes</h1>
+		
+		<p>
+			Get toll station passes for a specific period
+		</p>
+		<p>
+			<input
+				class="input is-info"
+				style="max-width: 12em;"
+				type="text"
+				placeholder="Station ID"
+			/>
+			<input
+				class="input is-info"
+				style="max-width: 20em;"
+				type="text"
+				placeholder="Start date (YYYYMMDD)"
+			/>
+			<input
+				class="input is-info"
+				style="max-width: 20em;"
+				type="text"
+				placeholder="End date (YYYYMMDD)"
+			/>
+		</p>
+		<p>
+			<button class="button is-info is-dark" onclick="getPasses()">Get Passes</button>
+		</p>
+
+
+
+
+
+		<div id="feed-getpasses"></div>
+
+
+
+
+
+
+	</div>
+
+
+
+
+</main>
+
+
+
+
+<script>
+
+function getPasses(){
+
+	const responseEl = document.getElementById('feed-getpasses');
+
+	const stationId = document.querySelector('input[placeholder="Station ID"]').value;
+	const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
+	const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
+
+	if (!stationId || !startDate || !endDate) {
+		msg(responseEl, 'error', 'Please enter all fields');
+		return;
+	}
+
+	const apicall = `tollstationpasses/${stationId}/${startDate}/${endDate}`;
+	apiRequest(apicall, 'GET')
+		.then(data => {
+			msg(responseEl, 'success', data)
+		})
+		.catch(error => {
+			msg(responseEl, 'error', error)
+		}
+	);
+
+}
+
+
+
+</script>
+
+
+
+<%- include('modules/bottom') %>
+
+

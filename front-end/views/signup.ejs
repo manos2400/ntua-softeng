@@ -1,0 +1,99 @@
+<%- include('modules/top') %>
+
+<title>Sign Up | TollNet Solutions</title>
+
+<style>
+body{
+    text-align:center;
+}
+@media (max-width: 768px) {
+    .box{
+        background-color: transparent;
+    }
+    .box p{
+        text-shadow: 3px 3px 5px #000000;
+        color: white;
+        font-weight:bold;
+    }
+}
+
+</style>
+
+
+</head><body>
+
+	<video id="video-background" autoplay muted loop>
+        <source src="/bg.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+
+
+
+<div class="box" style="width: 95%; max-width: 500px; margin: auto; margin-top: 100px;">
+	<div class="field" style="text-align: left;">
+	  <label class="label">Username</label>
+	  <div class="control">
+		<input class="input" id="username" type="text" placeholder="e.g. alex@example.com" />
+	  </div>
+	</div>
+  
+	<div class="field" style="text-align: left;">
+	  <label class="label">Password</label>
+	  <div class="control">
+		<input class="input" id="password" type="password" placeholder="********" />
+	  </div>
+	</div>
+
+	<div id="signup-feed"></div>
+
+	<button class="button is-primary" id="signup-btn" onclick="signup()">Sign up</button>
+
+	<p style="font-size: 0.9em; margin-top: 20px;">
+		Have an account? <a href="/login">Sign in</a>
+	</p>
+</div>
+
+
+<script>
+
+const err_el = document.getElementById('signup-feed');
+const btn = document.getElementById('signup-btn');
+
+function signup() {
+
+	const username = document.getElementById('username').value.trim();
+	const password = document.getElementById('password').value.trim();
+	btn.disabled = true;
+
+	err_el.innerHTML = '';
+
+	if (!username || !password) {
+		msg(err_el, 'error', 'Please enter both username and password');
+		btn.disabled = false;
+		return;
+	}
+
+    const apicall = 'signup';
+    const body = { username, password };
+    apiRequest(apicall, 'POST', body)
+        .then(data => {
+			msg(err_el, 'success', 'Sign up successful');
+			btn.disabled = false;
+        })
+        .catch(error => {
+			msg(err_el, 'error', error.message);
+			btn.disabled = false;
+		}
+	);
+}
+
+
+</script>
+
+
+
+<%- include('modules/bottom') %>
+
+
+

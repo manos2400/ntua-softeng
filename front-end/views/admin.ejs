@@ -1,0 +1,218 @@
+<%- include('modules/top') %>
+
+
+<title>Admin | TollNet Solutions</title>
+
+
+
+<style>
+body{
+    text-align:center;
+}
+@media (max-width: 768px) {
+    .box{
+        background-color: transparent;
+    }
+    .box p{
+        text-shadow: 3px 3px 5px #000000;
+        color: white;
+        font-weight:bold;
+    }
+}
+
+</style>
+
+
+</head><body style="text-align:center;">
+
+<%- include('modules/header') %>
+
+<main>
+
+	<div class="content">
+		
+		
+		<h1>Health Check</h1>
+		<div class="skeleton-lines" id="content-healthcheck">
+			<div></div><div></div><div></div><div></div>
+		</div>
+
+		<h1>Reset Stations</h1>
+		<p>
+			Initialize the toll station table with the values contained in the file named tollstations2024.csv.
+		</p>
+		<p>
+			<button class="button is-danger is-dark" onclick="resetStations()">Reset Stations</button>
+		</p>
+		<div id="feed-resetstations"></div>
+
+
+		<h1>Reset Passes</h1>
+		<p>
+			Initialize transit events (delete all events), as well as all tables/collections that store data dependent on transits
+			(e.g., tags, if such tables or collections exist).
+			Also initialize the administrative account with the values username: admin and password: freepasses4all.
+		</p>
+		<p>
+			<button class="button is-danger is-dark" onclick="resetPasses()">Reset Passes</button>
+		</p>
+		<div id="feed-resetpasses"></div>
+
+		<h1>Add Passes</h1>
+		<p>
+			Upload a CSV file containing transit events to update the transit events, as well as all tables/collections that store data dependent on transits
+			(e.g., tags, if such tables or collections exist).
+			The file format (field names) is mandatory as the one given in the example file named passes-sample.csv.
+		</p>
+		<p>
+			<div class="file is-boxed">
+				<label class="file-label">
+				  <input class="file-input" type="file" name="resume" id="passesfile" accept=".csv">
+				  <span class="file-cta">
+					<span class="file-icon">
+					  <i class="fas fa-upload"></i>
+					</span>
+					<span class="file-label"> Choose a file… </span>
+				  </span>
+				</label>
+			  </div>
+		</p>
+		<p>
+			<button class="button is-primary" onclick="addPasses()">Add Passes</button>
+		</p>
+		<div id="feed-addpasses"></div>
+
+
+
+
+
+
+	</div>
+
+
+
+
+</main>
+
+
+
+
+<script>
+
+const err_el = document.getElementById('signup-feed');
+const btn = document.getElementById('signup-btn');
+
+function signup() {
+
+	const username = document.getElementById('username').value.trim();
+	const password = document.getElementById('password').value.trim();
+	btn.disabled = true;
+
+	clearError(err_el);
+
+	if (!username || !password) {
+		showError(err_el, 'Please enter both username and password');
+		btn.disabled = false;
+		return;
+	}
+
+    const apicall = 'signup';
+    const body = { username, password };
+    apiRequest(apicall, 'POST', body)
+        .then(data => {
+            console.log('Sign successful:', data);
+            console.log('Logging in...');
+			btn.disabled = false;
+        })
+        .catch(error => {
+            showError(err_el, error.message);
+			btn.disabled = false;
+		}
+	);
+}
+
+
+function loadHealthCheck(){
+
+	const responseEl = document.getElementById('content-healthcheck');
+
+	const apicall = 'healthcheck';
+	apiRequest(apicall, 'GET')
+		.then(data => {
+			msg(responseEl, 'success', data)
+		})
+		.catch(error => {
+			msg(responseEl, 'error', error)
+		}
+	);
+
+}
+
+loadHealthCheck();
+
+function resetStations(){
+
+	const responseEl = document.getElementById('feed-resetstations');
+
+	const apicall = 'resetstations';
+	apiRequest(apicall, 'POST')
+		.then(data => {
+			msg(responseEl, 'success', data)
+		})
+		.catch(error => {
+			msg(responseEl, 'error', error)
+		}
+	);
+
+}
+
+function resetPasses(){
+
+	const responseEl = document.getElementById('feed-resetpasses');
+
+	const apicall = 'resetpasses';
+	apiRequest(apicall, 'POST')
+		.then(data => {
+			msg(responseEl, 'success', data)
+		})
+		.catch(error => {
+			msg(responseEl, 'error', error)
+		}
+	);
+
+}
+
+function addPasses(){
+
+	const responseEl = document.getElementById('feed-addpasses');
+	const passesfile = document.getElementById('passesfile').files[0];
+
+	if (!passesfile) {
+		msg(responseEl, 'error', 'Please choose a file');
+		return;
+	}
+
+	const formData = new FormData();
+	formData.append('passesfile', passesfile);
+
+	const apicall = 'addpasses';
+	apiRequest(apicall, 'POST', formData)
+		.then(data => {
+			msg(responseEl, 'success', data)
+		})
+		.catch(error => {
+			msg(responseEl, 'error', error)
+		}
+	);
+
+}
+
+
+</script>
+
+
+
+
+<%- include('modules/bottom') %>
+
+

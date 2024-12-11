@@ -1,0 +1,129 @@
+<%- include('modules/top') %>
+
+
+<title>Charges By | TollNet Solutions</title>
+
+
+</head><body style="text-align:center;">
+	<%- include('modules/header') %>
+
+
+<main>
+
+	<div class="content">
+		
+		
+		<h1>Charges By</h1>
+		
+		
+
+		<p>
+			Get charges from all other tag operators for a specific period
+		</p>
+		<p>
+			<input
+				class="input is-info"
+				style="max-width: 15em;"
+				type="text"
+				placeholder="Operator ID"
+			/>
+			<input
+				class="input is-info"
+				style="max-width: 15em;"
+				type="text"
+				placeholder="Start date (YYYYMMDD)"
+			/>
+			<input
+				class="input is-info"
+				style="max-width: 15em;"
+				type="text"
+				placeholder="End date (YYYYMMDD)"
+			/>
+		</p>
+		<p>
+			
+			<div class="dropdown" id="format-select" value="">
+				<div class="dropdown-trigger">
+				  <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+					<span>Choose format</span>
+					<span class="icon is-small">
+					  <i class="fas fa-angle-down" aria-hidden="true"></i>
+					</span>
+				  </button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu3" role="menu">
+				  <div class="dropdown-content">
+					<a href="#" class="dropdown-item"> csv </a>
+					<a href="#" class="dropdown-item"> json </a>
+				  </div>
+				</div>
+			  </div>
+		</p>
+		<p>
+			<button class="button is-info is-dark" onclick="getCharges()">Get Charges</button>
+		</p>
+
+
+
+
+		<div id="feed-getcharges"></div>
+
+
+
+
+
+
+	</div>
+
+
+
+
+</main>
+
+
+
+
+<script>
+
+function getCharges(){
+	
+	const responseEl = document.getElementById('feed-getcharges');
+
+	const opid = document.querySelector('input[placeholder="Operator ID"]').value;
+	const from = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
+	const to = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
+	const format = document.querySelector('#format-select').getAttribute('value');
+
+	console.log(opid, from, to, format);
+
+	if (!format) {
+		msg(responseEl, 'error', 'Please choose a format');
+		return;
+	}
+
+	if (!opid || !from || !to || !format) {
+		msg(responseEl, 'error', 'Please enter all fields');
+		return;
+	}
+
+	const apicall = `chargesBy/${opid}/${from}/${to}?format=${format}`;
+	apiRequest(apicall, 'GET')
+		.then(data => {
+			msg(responseEl, 'success', data)
+		})
+		.catch(error => {
+			msg(responseEl, 'error', error)
+		}
+	);
+}
+
+
+
+</script>
+
+
+
+
+<%- include('modules/bottom') %>
+
+
