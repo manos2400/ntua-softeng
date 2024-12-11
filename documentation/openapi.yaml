@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Admin API
-  version: 1.0.0
+  title: Tolls API
+  version: 0.0.1
 paths:
   /api/admin/healthcheck:
     get:
