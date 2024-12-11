@@ -5,7 +5,6 @@ import servicesRoutes from './routes/services.routes';
 import authRoutes from "./routes/auth.routes";
 import { errorHandler } from './middlewares/error.middleware';
 import {authMiddleware} from "./middlewares/auth.middleware";
-import {roleMiddleware} from "./middlewares/role.middleware";
 
 const app = express();
 

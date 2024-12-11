@@ -1,0 +1,607 @@
+openapi: 3.0.0
+info:
+  title: Admin API
+  version: 1.0.0
+paths:
+  /api/admin/healthcheck:
+    get:
+      summary: Health Check Endpoint
+      description: Returns the health status of the system, including database connection and entity counts.
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Health check status returned successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the system.
+                    example: OK
+                  dbconnection:
+                    type: string
+                    description: Database connection status.
+                    example: connected
+                  n_stations:
+                    type: integer
+                    description: Number of stations in the database.
+                    example: 42
+                  n_tags:
+                    type: integer
+                    description: Number of tags in the database.
+                    example: 128
+                  n_passes:
+                    type: integer
+                    description: Number of passes in the database.
+                    example: 256
+        '500':
+          description: Health check failed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the system.
+                    example: failed
+                  dbconnection:
+                    type: string
+                    description: Database connection status.
+                    example: disconnected
+  /api/admin/resetstations:
+    post:
+      summary: Reset Stations
+      description: Resets the stations by reloading data from a CSV file.
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Stations reset successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: OK
+        '500':
+          description: Error resetting stations.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: failed
+                  info:
+                    type: string
+                    description: Error information.
+                    example: Error resetting stations.
+  /api/admin/resetpasses:
+    post:
+      summary: Reset Passes
+      description: Deletes all passes and tags, and creates an admin user.
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Passes reset successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: OK
+        '500':
+          description: Error resetting passes.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: failed
+                  info:
+                    type: string
+                    description: Error information.
+                    example: Error resetting passes.
+  /api/admin/addpasses:
+    post:
+      summary: Add Passes
+      description: Adds new passes to the system from the provided data.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                passes:
+                  type: string
+                  format: csv
+                  description: CSV file containing passes to be added.
+      responses:
+        '200':
+          description: Passes added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: OK
+        '500':
+          description: Error adding passes.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: failed
+                  info:
+                    type: string
+                    description: Error information.
+                    example: Error adding passes.
+  /api/admin/users:
+    get:
+      summary: Get Users
+      description: Retrieves a list of all users.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Users retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Username of a user.
+                  example: admin
+        '500':
+          description: Error retrieving users.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: failed
+                  info:
+                    type: string
+                    description: Error information.
+                    example: Error retrieving users.
+
+    post:
+      summary: Modify User
+      description: Creates or updates a user with the provided username and password.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user to be created or updated.
+                  example: newuser
+                password:
+                  type: string
+                  description: The password for the user.
+                  example: securepassword123
+      responses:
+        '200':
+          description: User modified successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: OK
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message.
+                    example: Username and password are required.
+        '500':
+          description: Error modifying user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: failed
+                  info:
+                    type: string
+                    description: Error information.
+                    example: Error modifying user.
+  /api/tollStationPasses/{tollStationID}/{date_from}/{date_to}:
+    get:
+      summary: Get Toll Station Passes
+      description: Retrieves passes for a specific toll station within a given time period.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Services
+      parameters:
+        - name: tollStationID
+          in: path
+          required: true
+          description: ID of the toll station.
+          schema:
+            type: string
+        - name: date_from
+          in: path
+          required: true
+          description: Start date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: date_to
+          in: path
+          required: true
+          description: End date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Response format, either JSON or CSV.
+          schema:
+            type: string
+            enum: [ json, csv ]
+      responses:
+        '200':
+          description: Passes retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stationID:
+                    type: string
+                    example: AM01
+                  stationOperator:
+                    type: string
+                    example: aegeanmotorway
+                  requestTimestamp:
+                    type: string
+                    example: 2021-05-01T12:00:00Z
+                  periodFrom:
+                    type: string
+                    example: 2021-05-01 00:00
+                  periodTo:
+                    type: string
+                    example: 2021-06-01 23:59
+                  n_passes:
+                    type: integer
+                    example: 150
+                  passList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        passIndex:
+                          type: integer
+                          example: 1
+                        passID:
+                          type: string
+                          example: 3030
+                        timestamp:
+                          type: string
+                          example: 2021-05-01T12:00:00Z
+                        tagID:
+                          type: string
+                          example: NAOP0J43D5
+                        tagProvider:
+                          type: string
+                          example: naodos
+                        passType:
+                          type: string
+                          example: visitor
+                        passCharge:
+                          type: number
+                          example: 2
+            text/csv:
+              schema:
+                type: string
+                example: stationID,stationOperator,requestTimestamp,periodFrom,periodTo,n_passes,passID,timestamp,tagID,tagProvider,passType,passCharge
+        '400':
+          description: No toll station found for the provided ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+                    example: Toll station not found.
+        '500':
+          description: Error retrieving passes.
+
+  /api/passAnalysis/{stationOpID}/{tagOpID}/{date_from}/{date_to}:
+    get:
+      summary: Get Pass Analysis
+      description: Provides an analysis of passes based on station and tag operator within a specified period.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Services
+      parameters:
+        - name: stationOpID
+          in: path
+          required: true
+          description: ID of the station operator.
+          schema:
+            type: string
+        - name: tagOpID
+          in: path
+          required: true
+          description: ID of the tag operator.
+          schema:
+            type: string
+        - name: date_from
+          in: path
+          required: true
+          description: Start date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: date_to
+          in: path
+          required: true
+          description: End date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Response format, either JSON or CSV.
+          schema:
+            type: string
+            enum: [ json, csv ]
+      responses:
+        '200':
+          description: Analysis retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+            text/csv:
+              schema:
+                type: string
+        '400':
+          description: At least one of the operator IDs given where invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+                    example: Station or tag operator not found.
+        '500':
+          description: Error performing analysis.
+
+  /api/passesCost/{tollOpID}/{tagOpID}/{date_from}/{date_to}:
+    get:
+      summary: Get Passes Cost
+      description: Retrieves the total cost of passes between specific operators within a period.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Services
+      parameters:
+        - name: tollOpID
+          in: path
+          required: true
+          description: ID of the toll operator.
+          schema:
+            type: string
+        - name: tagOpID
+          in: path
+          required: true
+          description: ID of the tag operator.
+          schema:
+            type: string
+        - name: date_from
+          in: path
+          required: true
+          description: Start date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: date_to
+          in: path
+          required: true
+          description: End date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Response format, either JSON or CSV.
+          schema:
+            type: string
+            enum: [ json, csv ]
+      responses:
+        '200':
+          description: Cost retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+            text/csv:
+              schema:
+                type: string
+        '500':
+          description: Error retrieving cost.
+
+  /api/chargesBy/{tollOpID}/{date_from}/{date_to}:
+    get:
+      summary: Get Charges By Operator
+      description: Retrieves charges grouped by visiting operators within a specified period.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Services
+      parameters:
+        - name: tollOpID
+          in: path
+          required: true
+          description: ID of the toll operator.
+          schema:
+            type: string
+        - name: date_from
+          in: path
+          required: true
+          description: Start date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: date_to
+          in: path
+          required: true
+          description: End date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Response format, either JSON or CSV.
+          schema:
+            type: string
+            enum: [ json, csv ]
+      responses:
+        '200':
+          description: Charges retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+            text/csv:
+              schema:
+                type: string
+        '500':
+          description: Error retrieving charges.
+  /api/login:
+    post:
+      summary: Login
+      description: Logs in a user with the provided username and password.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user to be logged in.
+                  example: newuser
+                password:
+                  type: string
+                  description: The password for the user.
+                  example: securepassword123
+      responses:
+        '200':
+          description: User logged in successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token for the user.
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5ld3VzZXIifQ.1Jf8
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message.
+                    example: Username and password are required.
+        '401':
+            description: Invalid username or password.
+            content:
+              application/json:
+                schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Error message.
+                        example: Invalid username or password.
+        '500':
+            description: Error logging in.
+  /api/logout:
+    post:
+      summary: Logout
+      description: Logs out the currently logged in user.
+      tags:
+        - Authentication
+      security:
+        - ObservatoryAuth: [ ]
+      responses:
+        '200':
+          description: User logged out successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: OK
+components:
+  securitySchemes:
+    ObservatoryAuth:
+      type: apiKey
+      in: header
+      name: X-observatory-auth

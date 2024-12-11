@@ -23,7 +23,7 @@ export const getTollStationPasses = async (req: Request, res: Response) => {
     try {
         const station = await Station.findOne({ where: { id: tollStationID }, relations: ['operator'] });
         if (!station) {
-            res.status(404).json({ error: 'Toll station not found' });
+            res.status(400).json({ error: 'Toll station not found' });
             return;
         }
 
@@ -73,7 +73,7 @@ export const getPassAnalysis = async (req: Request, res: Response) => {
          const tagOp = await Operator.findOneBy({ id: tagOpID });
 
          if (!stationOp || !tagOp) {
-             res.status(404).json({ error: 'Station or tag operator not found' });
+             res.status(400).json({ error: 'Station or tag operator not found' });
              return;
          }
 
@@ -125,7 +125,7 @@ export const getChargesBy = async (req: Request, res: Response) => {
         const tollOp = await Operator.findOneBy({ id: tollOpID });
 
         if (!tollOp) {
-            res.status(404).json({ error: 'Toll operator not found' });
+            res.status(400).json({ error: 'Toll operator not found' });
             return;
         }
 
@@ -192,7 +192,7 @@ export const getPassesCost = async (req: Request, res: Response) => {
         const tagOp = await Operator.findOneBy({ id: tagOpID });
 
         if (!tollOp || !tagOp) {
-            res.status(404).json({ error: 'Toll or tag operator not found' });
+            res.status(400).json({ error: 'Toll or tag operator not found' });
             return;
         }
 
