@@ -144,6 +144,8 @@ export const addPasses =
                 }
 
                 res.status(200).json({ status: 'OK' });
+                // Delete the file after processing
+                fs.unlinkSync(req.file.path);
             } catch (error) {
                 console.error('Error adding passes:', error);
                 res.status(500).json({ status: 'failed', info: error });
