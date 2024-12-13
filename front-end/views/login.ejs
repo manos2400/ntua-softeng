@@ -42,14 +42,14 @@ body{
 	<div class="field" style="text-align: left;">
 	  <label class="label">Username</label>
 	  <div class="control">
-		<input class="input" id="username" type="text" placeholder="e.g. alex@example.com" />
+		<input class="input" id="username" type="text" placeholder="e.g. alex@example.com" value="admin" />
 	  </div>
 	</div>
   
 	<div class="field" style="text-align: left;">
 	  <label class="label">Password</label>
 	  <div class="control">
-		<input class="input" id="password" type="password" placeholder="********" />
+		<input class="input" id="password" type="password" placeholder="********" value="freepasses4all" />
 	  </div>
 	</div>
 
@@ -86,8 +86,11 @@ function login() {
     const body = { username, password };
     apiRequest(apicall, 'POST', body)
         .then(data => {
-			msg(err_el, 'success', 'Login successful');
+			//msg(err_el, 'success', 'Logging in...');
+			// save token to cookie
+			document.cookie = `token=${data.token}; path=/`;
 			btn.disabled = false;
+			window.location.href = '/';
         })
         .catch(error => {
 			msg(err_el, 'error', error.message);

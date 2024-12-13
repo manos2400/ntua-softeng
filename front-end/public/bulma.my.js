@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // dropdown
 document.addEventListener('DOMContentLoaded', () => {
 
-  // get all elements with calss dropdown
+  // get all elements with class dropdown
   const dds = document.querySelectorAll('.dropdown');
 
   dds.forEach(dd => {
@@ -63,6 +63,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   );
+}
+);
+
+
+
+// file input
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  // get all elements with class fileinput
+  const dds = document.querySelectorAll('.file');
+
+  dds.forEach(dd => {
+    const fileInput = dd.querySelector('input[type=file]');
+    const fileLabel = dd.querySelector('.file-name');
+
+    // if there is already a file, add the name to the label
+    if (fileInput.files.length > 0) {
+      fileLabel.textContent = fileInput.files[0].name;
+    }
+
+    fileInput.onchange = () => {
+      if (fileInput.files.length > 0) {
+        fileLabel.textContent = fileInput.files[0].name;
+      }
+    };
+  }
+  );
+
+
+
 }
 );
 

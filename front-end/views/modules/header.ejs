@@ -38,13 +38,17 @@
   <script>
 
     function logout(){
-      apiRequest('logout', 'POST')
+      document.cookie = `token=; path
+      =/`;
+      window.location.href = '/';
+        
+      /*apiRequest('logout', 'POST')
         .then(data => {
           window.location.href = '/';
         })
         .catch(error => {
           alert(error);
         }
-      );
+      );*/
     }
     </script>

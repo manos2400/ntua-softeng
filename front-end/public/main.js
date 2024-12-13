@@ -1,20 +1,78 @@
-async function apiRequest(url, method = 'GET', body = null) {
-    const token = localStorage.getItem('authToken'); // or from cookies, depending on your setup
+function getToken(){
+    const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+    return token.replace(/\s/g, '');
+}
+
+const API_BASE = 'http://localhost:9115/api';
+
+// simple POST, GET requests
+async function apiRequest(url, method = 'GET', data = null, output_format = 'json') {
+
     const headers = {
+        'x-observatory-auth': getToken(),
         'Content-Type': 'application/json',
-        'x-observatory-auth': token, // Add token here
     };
 
-    const options = { method, headers };
-    if (body) options.body = JSON.stringify(body);
+    const options = {
+        method,
+        headers
+    };
 
-    const response = await fetch(`http://localhost:9115/${url}`, options);
+    if(data){
+        options.body = JSON.stringify(data);
+    }
+
+    console.log('Request:', url, options);
+
+    const response = await fetch(`${API_BASE}/${url}`, options);
+
+    //console.log('Response:', response);
+
+    if(output_format == 'json'){
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || `Error: ${response.status}`);
+        }
+        return await response.json();
+        
+    } else {
+
+        if(!response.ok){
+            throw new Error(`Error: ${response.status}`);
+        }
+        return response;
+
+    }
+}
+
+// File POST request
+async function fileRequest(url, data){
+
+    const headers = {
+        'x-observatory-auth': getToken(),
+        'Content-Type': 'multipart/form-data',
+    };
+
+    const formData = new FormData();
+    formData.append('file', data);
+
+    const options = {
+        method: 'POST',
+        headers,
+        body: formData,
+    };
+
+    console.log('Request:', url, options);
+
+    const response = await fetch(`${API_BASE}/${url}`, options);
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || `Error: ${response.status}`);
     }
     return await response.json();
 }
+
 
 
 
@@ -30,32 +88,4 @@ function msg(container,type,txt){
     container.style.padding = '5px 5px 20px 5px';
     container.innerHTML = '';
     container.appendChild(article);
-}
-
-
-// Register function
-function register(username, password, email) {
-    const url = '/api/register';
-    const body = { username, password, email };
-    apiRequest(url, 'POST', body)
-        .then(data => {
-            console.log('Registration successful:', data);
-            // Handle success
-        })
-        .catch(error => {
-            alert(`Registration failed: ${error.message}`);
-        });
-}
-
-// Get information from the database
-function getInfo(endpoint) {
-    const url = `/api/${endpoint}`;
-    apiRequest(url, 'GET')
-        .then(data => {
-            console.log('Data retrieved:', data);
-            // Handle success
-        })
-        .catch(error => {
-            alert(`Failed to fetch data: ${error.message}`);
-        });
 }

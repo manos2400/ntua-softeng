@@ -26,12 +26,14 @@
 				style="max-width: 15em;"
 				type="text"
 				placeholder="Station Operator ID"
+				value = "AM"
 			/>
 			<input
 				class="input is-info"
 				style="max-width: 15em;"
 				type="text"
 				placeholder="Tag Operator ID"
+				value = "AM"
 			/>
 		</p>
 		<p>
@@ -40,12 +42,14 @@
 				style="max-width: 15em;"
 				type="text"
 				placeholder="Start date (YYYYMMDD)"
+				value = "20220101"
 			/>
 			<input
 				class="input is-info"
 				style="max-width: 15em;"
 				type="text"
 				placeholder="End date (YYYYMMDD)"
+				value = "20230101"
 			/>
 		</p>
 		<p>
@@ -93,6 +97,38 @@ function getAnalysis(){
 	apiRequest(apicall, 'GET')
 		.then(data => {
 			msg(responseEl, 'success', data)
+			msg(responseEl, 'success', JSON.stringify(data.passList, null, 2));
+
+			/*
+			{ "passIndex": 1, "passID": 2026, "stationID": "AM06", "timestamp": "2022-01-01T07:11:00.000Z", "tagID": "AMLJH75LX", "passCharge": 3.6 },
+			 */
+
+		let html = `
+					<table class="table"><thead></thead>
+					<tbody>
+						<tr><th>Index</th><th>Pass ID</th><th>Station ID</th><th>Timestamp</th><th>Tag ID</th><th>Pass Charge</th></tr>
+	`;
+
+				for (let i = 0; i < data.passList.length; i++) {
+					let obj = data.passList[i];
+					html += `
+						<tr>
+							<td>${obj.passIndex}</td>
+							<td>${obj.passID}</td>
+							<td>${obj.stationID}</td>
+							<td>${obj.timestamp}</td>
+							<td>${obj.tagID}</td>
+							<td>${obj.passCharge}</td>
+						</tr>
+					`;
+				}
+				
+				
+				html += `
+					</tbody>
+				`;
+
+				responseEl.innerHTML = html;
 		})
 		.catch(error => {
 			msg(responseEl, 'error', error)

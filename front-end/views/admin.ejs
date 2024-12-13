@@ -65,17 +65,21 @@ body{
 			The file format (field names) is mandatory as the one given in the example file named passes-sample.csv.
 		</p>
 		<p>
-			<div class="file is-boxed">
+
+			<div class="file is-info has-name">
 				<label class="file-label">
-				  <input class="file-input" type="file" name="resume" id="passesfile" accept=".csv">
+				  <input class="file-input" type="file" name="passes.csv" id="passesfile" accept=".csv" />
 				  <span class="file-cta">
 					<span class="file-icon">
 					  <i class="fas fa-upload"></i>
 					</span>
-					<span class="file-label"> Choose a file… </span>
+					<span class="file-label"> Info file… </span>
 				  </span>
+				  <span class="file-name"> Choose a file… </span>
 				</label>
 			  </div>
+
+			
 		</p>
 		<p>
 			<button class="button is-primary" onclick="addPasses()">Add Passes</button>
@@ -99,47 +103,26 @@ body{
 
 <script>
 
-const err_el = document.getElementById('signup-feed');
-const btn = document.getElementById('signup-btn');
-
-function signup() {
-
-	const username = document.getElementById('username').value.trim();
-	const password = document.getElementById('password').value.trim();
-	btn.disabled = true;
-
-	clearError(err_el);
-
-	if (!username || !password) {
-		showError(err_el, 'Please enter both username and password');
-		btn.disabled = false;
-		return;
-	}
-
-    const apicall = 'signup';
-    const body = { username, password };
-    apiRequest(apicall, 'POST', body)
-        .then(data => {
-            console.log('Sign successful:', data);
-            console.log('Logging in...');
-			btn.disabled = false;
-        })
-        .catch(error => {
-            showError(err_el, error.message);
-			btn.disabled = false;
-		}
-	);
-}
-
-
 function loadHealthCheck(){
 
 	const responseEl = document.getElementById('content-healthcheck');
 
-	const apicall = 'healthcheck';
-	apiRequest(apicall, 'GET')
+	apiRequest('admin/healthcheck')
 		.then(data => {
-			msg(responseEl, 'success', data)
+
+			const html = `
+				<table class="table"><thead></thead>
+				<tbody>
+					<tr><th>Status</th><td>${data.status}</td></tr>	
+					<tr><th>DB Connection</th><td>${data.dbconnection}</td></tr>
+					<tr><th>No. of Stations</th><td>${data.n_stations}</td></tr>	
+					<tr><th>No. of Tags</th><td>${data.n_tags}</td></tr>
+					<tr><th>No. of Passes</th><td>${data.n_passes}</td></tr>
+				</tbody>
+			`;
+
+			responseEl.innerHTML = html;
+
 		})
 		.catch(error => {
 			msg(responseEl, 'error', error)
@@ -154,10 +137,9 @@ function resetStations(){
 
 	const responseEl = document.getElementById('feed-resetstations');
 
-	const apicall = 'resetstations';
-	apiRequest(apicall, 'POST')
+	apiRequest('admin/resetstations', 'POST')
 		.then(data => {
-			msg(responseEl, 'success', data)
+			msg(responseEl, 'success', data.status)
 		})
 		.catch(error => {
 			msg(responseEl, 'error', error)
@@ -170,10 +152,9 @@ function resetPasses(){
 
 	const responseEl = document.getElementById('feed-resetpasses');
 
-	const apicall = 'resetpasses';
-	apiRequest(apicall, 'POST')
+	apiRequest('admin/resetpasses', 'POST')
 		.then(data => {
-			msg(responseEl, 'success', data)
+			msg(responseEl, 'success', data.status)
 		})
 		.catch(error => {
 			msg(responseEl, 'error', error)
@@ -195,10 +176,10 @@ function addPasses(){
 	const formData = new FormData();
 	formData.append('passesfile', passesfile);
 
-	const apicall = 'addpasses';
-	apiRequest(apicall, 'POST', formData)
+	fileRequest('admin/addpasses', formData)
 		.then(data => {
-			msg(responseEl, 'success', data)
+			msg(responseEl, 'success', JSON.stringify(data, null, 2));
+			responseEl.scrollIntoView();
 		})
 		.catch(error => {
 			msg(responseEl, 'error', error)

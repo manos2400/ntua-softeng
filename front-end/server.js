@@ -1,65 +1,54 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 3000;
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
+// get token from cookie
+app.use(cookieParser());
+app.use((req, res, next) => {
+    token = req.cookies.token;
+    next();
+});
 
-// Helper function to check the token on the backend API
-async function checkToken(token) {
-    try {
-        const response = await fetch('http://localhost:9115/api/validate-token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-observatory-auth': token,  // send token in headers
-            }
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            return data.isValid;  // Return whether token is valid
-        } else {
-            throw new Error(data.message || 'Error validating token');
-        }
-    } catch (error) {
-        console.error('Error validating token:', error);
-        return false;  // Token is invalid or error occurred
-    }
+// if token exists, consider user logged in and as admin (only for UI)
+async function checkToken() {
+    return token;
 }
 
 app.get('/', async (req, res) => {
-
-    // get token from localstorage:
-    const token = req.query.token;
-    // log token to console:
-    console.log('Token:', token);
-
-    if(!token) {
-        res.render('landing', { title: 'Landing Page' });
-        return;
-    }
-
-    const isTokenValid = await checkToken(token);
-
-    if (isTokenValid) {
-        res.redirect('dashboard');
+    if (await checkToken()) {
+        res.render('dashboard', { title: 'Dashboard Page' });
     } else {
         res.render('landing', { title: 'Landing Page' });
     }
 });
+app.get('/login', async (req, res) => {
+    if (await checkToken()) {
+        res.render('dashboard', { title: 'Dashboard Page' });
+    } else {
+        res.render('login', { title: 'Login Page' });
+    }
+});
+app.get('/signup', async (req, res) => {
+    if (await checkToken()) {
+        res.render('dashboard', { title: 'Dashboard Page' });
+    } else {
+        res.render('signup', { title: 'Signup Page' });
+    }
+});
 
-
-app.get('/admin', (req, res) => {
-    res.render('admin', { title: 'Admin Page' });
+app.get('/admin', async (req, res) => {
+    if (await checkToken()) {
+        res.render('admin', { title: 'Admin Page' });
+    } else {
+        res.render('401', { title: '401 Page' });
+    }
 });
 app.get('/chargesBy', (req, res) => {
     res.render('chargesBy', { title: 'Charges By Page' });
-});
-app.get('/login', (req, res) => {
-    res.render('login', { title: 'Login Page' });
 });
 app.get('/passAnalysis', (req, res) => {
     res.render('passAnalysis', { title: 'Pass Analysis Page' });
@@ -67,18 +56,12 @@ app.get('/passAnalysis', (req, res) => {
 app.get('/passesCost', (req, res) => {
     res.render('passesCost', { title: 'Passes Cost Page' });
 });
-app.get('/signup', (req, res) => {
-    res.render('signup', { title: 'Signup Page' });
-});
 app.get('/tollStationPasses', (req, res) => {
     res.render('tollstationpasses', { title: 'Toll Station Passes Page' });
 });
-
-// 404 page
 app.get('*', (req, res) => {
     res.render('404', { title: '404 Page' });
 });
-
 
 
 app.listen(PORT, () => {
