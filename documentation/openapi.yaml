@@ -133,10 +133,9 @@ paths:
             schema:
               type: object
               properties:
-                passes:
+                file:
                   type: string
-                  format: csv
-                  description: CSV file containing passes to be added.
+                  format: text/csv
       responses:
         '200':
           description: Passes added successfully.
@@ -149,6 +148,21 @@ paths:
                     type: string
                     description: Status of the operation.
                     example: OK
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation.
+                    example: failed
+                  info:
+                    type: string
+                    description: Error information.
+                    example: No file uploaded.
         '500':
           description: Error adding passes.
           content:
