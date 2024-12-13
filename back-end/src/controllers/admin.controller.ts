@@ -3,10 +3,14 @@ import { Station } from '../entities/station.entity';
 import { Tag } from '../entities/tag.entity';
 import { Pass } from '../entities/pass.entity';
 import { dataSource } from '../config/database';
+import multer from 'multer';
 import * as fs from 'fs';
 import {Operator} from "../entities/operator.entity";
 import {User} from "../entities/user.entity";
 import bcrypt from "bcrypt";
+
+
+const upload = multer({ dest: 'uploads/' });
 
 export const healthCheck = async (req: Request, res: Response) => {
     try {
@@ -90,54 +94,63 @@ export const resetPasses = async (req: Request, res: Response) => {
 
 };
 
-export const addPasses = async (req: Request, res: Response) => {
-    try {
-        const passesData = req.body.passes;
-        const passes = passesData.split('\n');
+export const addPasses =
+    [
+        upload.single('file'),
+        async (req: Request, res: Response) => {
+            try {
+                if(!req.file) {
+                    res.status(400).json({ status: 'failed', info: 'No file uploaded' });
+                    return;
+                }
+                const passesData = fs.readFileSync(req.file.path, 'utf-8');
+                const passes = passesData.split('\n');
 
-        passes.shift(); // remove the header
+                passes.shift(); // remove the header
 
-        for (const pass of passes) {
-            if (!pass.trim()) continue; // Skip empty lines
-            const [timestamp, tollID, tagRef, tagHomeID, charge] = pass.split(',');
+                for (const pass of passes) {
+                    if (!pass.trim()) continue; // Skip empty lines
+                    const [timestamp, tollID, tagRef, tagHomeID, charge] = pass.split(',');
 
-            const station = await Station.findOne({
-                where: { id: tollID },
-                relations: ['operator']
-            });
+                    const station = await Station.findOne({
+                        where: { id: tollID },
+                        relations: ['operator']
+                    });
 
-            if(!station) {
-                throw new Error(`Station not found for pass: ${pass}`);
+                    if(!station) {
+                        throw new Error(`Station not found for pass: ${pass}`);
+                    }
+
+                    let tag = await Tag.findOne({
+                        where: { id: tagRef },
+                        relations: ['operator']
+                    })
+
+                    if(!tag) {
+                        const operator = await Operator.findOneBy({ id: tagHomeID });
+                        tag = new Tag();
+                        tag.id = tagRef;
+                        tag.operator = operator!;
+                        await tag.save();
+                    }
+
+                    const newPass = new Pass();
+                    newPass.charge = parseFloat(charge);
+                    newPass.timestamp = new Date(timestamp);
+                    newPass.paid = station.operator.id === tag.operator.id;
+                    newPass.station = station;
+                    newPass.tag = tag;
+                    await newPass.save();
+                }
+
+                res.status(200).json({ status: 'OK' });
+            } catch (error) {
+                console.error('Error adding passes:', error);
+                res.status(500).json({ status: 'failed', info: error });
             }
-
-            let tag = await Tag.findOne({
-                where: { id: tagRef },
-                relations: ['operator']
-            })
-
-            if(!tag) {
-                const operator = await Operator.findOneBy({ id: tagHomeID });
-                tag = new Tag();
-                tag.id = tagRef;
-                tag.operator = operator!;
-                await tag.save();
-            }
-
-            const newPass = new Pass();
-            newPass.charge = parseFloat(charge);
-            newPass.timestamp = new Date(timestamp);
-            newPass.paid = station.operator.id === tag.operator.id;
-            newPass.station = station;
-            newPass.tag = tag;
-            await newPass.save();
         }
+    ]
 
-        res.status(200).json({ status: 'OK' });
-    } catch (error) {
-        console.error('Error adding passes:', error);
-        res.status(500).json({ status: 'failed', info: error });
-    }
-};
 
 export const getUsers = async (req: Request, res: Response) => {
     try {

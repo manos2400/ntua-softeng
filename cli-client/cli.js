@@ -210,11 +210,10 @@ program
                     console.error(`Error reading file: ${err.message}`);
                     return;
                 }
-                //pass the csv as content type: multipart/form-data and mime type: 'text/csv'
 
                 const formData = new FormData();
                 formData.append('file', data, {
-                    filename: source,
+                    filename: 'passes.csv',
                     contentType: 'text/csv',
                 });
 
