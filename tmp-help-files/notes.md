@@ -18,7 +18,7 @@ docker compose down # stop
 ## Backend
 
 ```
-cd backend
+cd back-end
 pnpm install # build (once after every change)
 pnpm run dev # start
 ```
@@ -37,7 +37,7 @@ npm install commander # install (once)
 ## Frontend
 
 ```
-cd frontend
+cd front-end
 npm init -y # creates package.json (once)
 npm install express ejs cookie-parser (once)
 
@@ -56,6 +56,14 @@ Go to [http://localhost:3000](http://localhost:3000)
 - `/passesCost`: passes cost
 - `/chargesBy`: charges by
 
+
+## SSL
+
+```
+openssl genpkey -algorithm RSA -out private.key
+openssl req -new -key private.key -out certificate.csr
+openssl x509 -req -in certificate.csr -signkey private.key -out certificate.crt
+```
 
 ## Test requests
 
