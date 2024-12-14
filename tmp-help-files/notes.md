@@ -2,81 +2,54 @@
 
 ## Requirements
 
-- Node.js
-```
-node -v
-```
-- npm
-```
-npm -v
-```
-If not, run `sudo apt install npm`
-- pnpm
-```
-pnpm -v
-```
+- Node.js | `node -v`
+- npm | `npm -v` | `sudo apt install npm`
+- pnpm | `pnpm -v` | `curl -fsSL https://get.pnpm.io/install.sh | sh -`
 
 ## Database
 
-start:
 ```
 cd tmp-help-files # contains compose.yaml
-docker compose up -d
-```
-stop:
-```
-cd tmp-help-files # contains compose.yaml
-docker compose down
-```
-
-initialize db by adding the first (admin) user and stations:
-```
-curl -X POST http://localhost:9115/api/admin/resetstations
-curl -X POST http://localhost:9115/api/admin/resetpasses
+docker compose up -d # start
+curl -X POST http://localhost:9115/api/admin/resetpasses # initialize db by adding the first (admin) user
+docker compose down # stop
 ```
 
 ## Backend
 
-start:
 ```
 cd backend
-pnpm install
-pnpm run dev
+pnpm install # build (once after every change)
+pnpm run dev # start
 ```
 
 ## CLI
 
-start:
 ```
 cd cli-client
-npm install commander
-```
-use:
-```
-./cli.js login --username admin --passw freepasses4all
-./cli.js admin --addpasses --source /home/aa/Downloads/passes-sample.csv
+npm install commander # install (once)
+
+# examples:
+./cli.js login --username admin --passw freepasses4all # login
+./cli.js admin --addpasses --source /home/aa/Downloads/passes-sample.csv # upload file
 ```
 
 ## Frontend
 
-setup:
 ```
 cd frontend
-npm init -y # creates package.json
-npm install express ejs cookie-parser
+npm init -y # creates package.json (once)
+npm install express ejs cookie-parser (once)
+
+node server.js # start
 ```
-start:
-```
-cd frontend
-node server.js
-```
-Go to `http://localhost:3000`.
+Go to [http://localhost:3000](http://localhost:3000)
+
 
 ### Routes
 
 - `/`: landing page if not logged in, dashboard if logged in
 - `/login`: login page
-- `/signup`: signup page
 - `/admin`: admin page
 - `/tollStationPasses`: toll station passes
 - `/passAnalysis`: pass analysis
