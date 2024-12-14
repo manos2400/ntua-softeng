@@ -32,13 +32,6 @@ app.get('/login', async (req, res) => {
         res.render('login', { title: 'Login Page' });
     }
 });
-app.get('/signup', async (req, res) => {
-    if (await checkToken()) {
-        res.render('dashboard', { title: 'Dashboard Page' });
-    } else {
-        res.render('signup', { title: 'Signup Page' });
-    }
-});
 
 app.get('/admin', async (req, res) => {
     if (await checkToken()) {

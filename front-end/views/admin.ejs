@@ -1,9 +1,6 @@
 <%- include('modules/top') %>
 
-
 <title>Admin | TollNet Solutions</title>
-
-
 
 <style>
 body{
@@ -21,7 +18,6 @@ body{
 }
 
 </style>
-
 
 </head><body style="text-align:center;">
 
@@ -79,27 +75,14 @@ body{
 				</label>
 			  </div>
 
-			
 		</p>
 		<p>
 			<button class="button is-primary" onclick="addPasses()">Add Passes</button>
 		</p>
 		<div id="feed-addpasses"></div>
 
-
-
-
-
-
 	</div>
-
-
-
-
 </main>
-
-
-
 
 <script>
 
@@ -163,36 +146,31 @@ function resetPasses(){
 
 }
 
-function addPasses(){
+function addPasses() {
+    const responseEl = document.getElementById('feed-addpasses');
+    const passesfile = document.getElementById('passesfile').files[0];
 
-	const responseEl = document.getElementById('feed-addpasses');
-	const passesfile = document.getElementById('passesfile').files[0];
+	msg(responseEl, 'loading');
 
-	if (!passesfile) {
-		msg(responseEl, 'error', 'Please choose a file');
-		return;
-	}
+    if (!passesfile) {
+        msg(responseEl, 'error', 'Please choose a file');
+        return;
+    }
 
-	const formData = new FormData();
-	formData.append('passesfile', passesfile);
+    const formData = new FormData();
+    formData.append('file', passesfile);  // The field name must match the backend's "passesfile"
 
-	fileRequest('admin/addpasses', formData)
-		.then(data => {
-			msg(responseEl, 'success', JSON.stringify(data, null, 2));
-			responseEl.scrollIntoView();
-		})
-		.catch(error => {
-			msg(responseEl, 'error', error)
-		}
-	);
-
+    fileRequest('admin/addpasses', formData)
+        .then(data => {
+            msg(responseEl, 'success', data.status);
+            responseEl.scrollIntoView();
+        })
+        .catch(error => {
+            msg(responseEl, 'error', error.message || error);
+        });
 }
 
-
 </script>
-
-
-
 
 <%- include('modules/bottom') %>
 

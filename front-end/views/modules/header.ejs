@@ -2,7 +2,6 @@
   <div class="navbar-brand">
     <a class="navbar-item" href="/">
     <img src="/logo.jpg" alt="">
-  
     </a>
   
     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -35,20 +34,9 @@
   </div>
   </nav>
 
-  <script>
-
-    function logout(){
-      document.cookie = `token=; path
-      =/`;
-      window.location.href = '/';
-        
-      /*apiRequest('logout', 'POST')
-        .then(data => {
-          window.location.href = '/';
-        })
-        .catch(error => {
-          alert(error);
-        }
-      );*/
-    }
-    </script>
+<script>
+function logout() {
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    window.location.href = '/';
+}
+</script>

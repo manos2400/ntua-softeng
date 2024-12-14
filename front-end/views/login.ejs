@@ -58,10 +58,9 @@ body{
 	<button class="button is-primary" id="login-btn" onclick="login()">Sign in</button>
 
 	<p style="font-size: 0.9em; margin-top: 20px;">
-		Don't have an account? <a href="/signup">Sign up</a>
+		
 	</p>
 </div>
-
 
 <script>
 
@@ -88,7 +87,10 @@ function login() {
         .then(data => {
 			//msg(err_el, 'success', 'Logging in...');
 			// save token to cookie
-			document.cookie = `token=${data.token}; path=/`;
+			//document.cookie = `token=${data.token}; path=/`;
+			const expirationDate = new Date(Date.now() + 59 * 60 * 1000).toUTCString();
+			document.cookie = `token=${data.token}; path=/; expires=${expirationDate}`;
+
 			btn.disabled = false;
 			window.location.href = '/';
         })
@@ -98,11 +100,6 @@ function login() {
 		}
 	);
 }
-
-
 </script>
-
-
-
 
 <%- include('modules/bottom') %>

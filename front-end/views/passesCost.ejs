@@ -10,10 +10,7 @@
 
 	<div class="content">
 		
-		
 		<h1>Passes Cost</h1>
-		
-
 
 		<p>
 			Get the cost of passes performed by a specific tag operator in the road of another operator
@@ -73,25 +70,11 @@
 			<button class="button is-info is-dark" onclick="getCost()">Get Cost</button>
 		</p>
 
-
-
-
 		<div id="feed-getcost"></div>
-
-
-
-
-
 
 	</div>
 
-
-
-
 </main>
-
-
-
 
 <script>
 
@@ -156,14 +139,10 @@ function getCost(){
 					</tbody>
 				`;
 
-
-
 	}).catch(error => {
 		msg(responseEl, 'error', 'Error parsing CSV data: ' + error);
 	});
 
-	
-	
 }
 })
 		.catch(error => {
@@ -172,10 +151,6 @@ function getCost(){
 	);
 }
 
-
 </script>
-
-
-
 
 <%- include('modules/bottom') %>

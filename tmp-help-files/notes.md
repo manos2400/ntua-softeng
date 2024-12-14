@@ -29,6 +29,12 @@ cd tmp-help-files # contains compose.yaml
 docker compose down
 ```
 
+initialize db by adding the first (admin) user and stations:
+```
+curl -X POST http://localhost:9115/api/admin/resetstations
+curl -X POST http://localhost:9115/api/admin/resetpasses
+```
+
 ## Backend
 
 start:

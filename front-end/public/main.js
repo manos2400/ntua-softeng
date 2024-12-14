@@ -1,9 +1,12 @@
+const API_BASE = 'http://localhost:9115/api';
+
+// get auth token from cookie
 function getToken(){
-    const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+    let token = document.cookie.split('; ').find(row => row.startsWith('token='));
+    if(!token) return null;
+    token = token.split('=')[1];
     return token.replace(/\s/g, '');
 }
-
-const API_BASE = 'http://localhost:9115/api';
 
 // simple POST, GET requests
 async function apiRequest(url, method = 'GET', data = null, output_format = 'json') {
@@ -12,55 +15,49 @@ async function apiRequest(url, method = 'GET', data = null, output_format = 'jso
         'x-observatory-auth': getToken(),
         'Content-Type': 'application/json',
     };
-
     const options = {
         method,
         headers
     };
-
-    if(data){
-        options.body = JSON.stringify(data);
-    }
+    if(data) options.body = JSON.stringify(data);
 
     console.log('Request:', url, options);
 
     const response = await fetch(`${API_BASE}/${url}`, options);
 
-    //console.log('Response:', response);
-
     if(output_format == 'json'){
-
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.message || `Error: ${response.status}`);
+            const errorMessage = error.message || error.error || `${response.status}`;
+            throw new Error(errorMessage);
         }
         return await response.json();
-        
     } else {
-
-        if(!response.ok){
-            throw new Error(`Error: ${response.status}`);
+        if (!response.ok) {
+            const errorText = await response.text(); // Capture raw response text
+            let errorMessage;
+            try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.message || errorJson.error || errorText;
+            } catch {
+                errorMessage = errorText;
+            }
+            throw new Error(errorMessage);
         }
         return response;
-
     }
 }
 
-// File POST request
-async function fileRequest(url, data){
-
+// file requests
+async function fileRequest(url, data) {
     const headers = {
         'x-observatory-auth': getToken(),
-        'Content-Type': 'multipart/form-data',
+        // Do not set 'Content-Type' explicitly, let the browser set it automatically
     };
-
-    const formData = new FormData();
-    formData.append('file', data);
-
     const options = {
         method: 'POST',
         headers,
-        body: formData,
+        body: data, // Pass the FormData object directly
     };
 
     console.log('Request:', url, options);
@@ -68,15 +65,18 @@ async function fileRequest(url, data){
     const response = await fetch(`${API_BASE}/${url}`, options);
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || `Error: ${response.status}`);
+        const errorMessage = error.message || error.error || `${response.status}`;
+        throw new Error(errorMessage);
     }
     return await response.json();
 }
 
-
-
-
-function msg(container,type,txt){
+// quick styled messages for UI
+function msg(container,type,txt=""){
+    if(type=="loading"){
+        container.innerHTML = '<progress class="progress is-medium is-info" max="100">60%</progress>';
+        return;
+    }
     const article = document.createElement('article');
     article.classList.add('message');
     if(type=="error") article.classList.add('is-danger');
