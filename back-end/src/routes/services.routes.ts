@@ -7,7 +7,7 @@ router.get('/tollStationPasses/:tollStationID/:date_from/:date_to', getTollStati
 router.get('/passAnalysis/:stationOpID/:tagOpID/:date_from/:date_to', getPassAnalysis);
 router.get('/passesCost/:tollOpID/:tagOpID/:date_from/:date_to', getPassesCost);
 router.get('/chargesBy/:tollOpID/:date_from/:date_to', getChargesBy);
-router.put('/payDebt/:tollOpID/:tagOpID/:date_from/:date_to', payDebt);
-router.get('/getDebt/:tollOpID/:date_from/:date_to', getDebt);
+router.put('/payDebt/:tagOpID/:tollOpID/:date_from/:date_to', payDebt);
+router.get('/getDebt/:tagOpID/:date_from/:date_to', getDebt);
 
 export default router;

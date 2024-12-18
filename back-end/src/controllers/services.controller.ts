@@ -15,30 +15,6 @@ const handleError = (res: Response, error: any, message: string) => {
     res.status(500).json({ error: message });
 };
 
-const getVopList = (passes: Pass[]) => {
-    // Group passes by visiting operator (tag.operator.id)
-    const visitingOperators = passes.reduce((acc, pass) => {
-        const visitingOpID = pass.tag.operator.id;
-
-        // Initialize the operator in the accumulator if not present
-        if (!acc[visitingOpID]) {
-            acc[visitingOpID] = { nPasses: 0, passesCost: 0 };
-        }
-
-        // Increment passes count and add the charge
-        acc[visitingOpID].nPasses += 1;
-        acc[visitingOpID].passesCost += pass.charge;
-
-        return acc;
-    }, {} as Record<string, { nPasses: number; passesCost: number }>);
-
-    return Object.entries(visitingOperators).map(([opID, {nPasses, passesCost}]) => ({
-        visitingOpID: opID,
-        nPasses,
-        passesCost: passesCost.toFixed(2),
-    }));
-}
-
 export const getTollStationPasses = async (req: Request, res: Response) => {
     const { tollStationID, date_from, date_to } = req.params;
     const periodFrom = formatDate(date_from);
@@ -162,7 +138,28 @@ export const getChargesBy = async (req: Request, res: Response) => {
             relations: ['tag', 'station', 'tag.operator'],
         });
 
-        const vOpList = getVopList(passes);
+        // Group passes by visiting operator (tag.operator.id)
+        const visitingOperators = passes.reduce((acc, pass) => {
+            const visitingOpID = pass.tag.operator.id;
+
+            // Initialize the operator in the accumulator if not present
+            if (!acc[visitingOpID]) {
+                acc[visitingOpID] = { nPasses: 0, passesCost: 0 };
+            }
+
+            // Increment passes count and add the charge
+            acc[visitingOpID].nPasses += 1;
+            acc[visitingOpID].passesCost += pass.charge;
+
+            return acc;
+        }, {} as Record<string, { nPasses: number; passesCost: number }>);
+
+        const vOpList = Object.entries(visitingOperators).map(([opID, {nPasses, passesCost}]) => ({
+            visitingOpID: opID,
+            nPasses,
+            passesCost: passesCost.toFixed(2),
+        }));
+
 
         if(req.query.format === 'csv') {
             const richVopList = vOpList.map(vop => `${tollOpID},${new Date().toISOString()},${periodFrom},${periodTo},${vop.visitingOpID},${vop.nPasses},${vop.passesCost}`);
@@ -235,53 +232,73 @@ export const getPassesCost = async (req: Request, res: Response) => {
 };
 
 export const getDebt = async (req: Request, res: Response) => {
-    const { tollOpID, date_from, date_to } = req.params;
+    const { tagOpID, date_from, date_to } = req.params;
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
 
     try {
-        const tollOp = await Operator.findOneBy({ id: tollOpID });
+        const tagOp = await Operator.findOneBy({ id: tagOpID });
 
-        if (!tollOp) {
-            res.status(400).json({ error: 'Toll operator not found' });
+        if (!tagOp) {
+            res.status(400).json({ error: 'Tag operator not found' });
             return;
         }
 
         const passes = await Pass.find({
             where: {
-                station: { operator: tollOp },
-                tag: { operator: Not(tollOp) },
+                station: { operator: Not(tagOp) },
+                tag: { operator: tagOp },
                 timestamp: Between(new Date(periodFrom), new Date(periodTo)),
                 paid: false,
             },
-            relations: ['tag', 'station', 'tag.operator'],
+            relations: ['tag', 'station', 'station.operator'],
         });
 
-        const vOpList = getVopList(passes);
+        // Group passes by visiting operator (tag.operator.id)
+        const homeOperators = passes.reduce((acc, pass) => {
+            const homeOpID = pass.station.operator.id;
+
+            // Initialize the operator in the accumulator if not present
+            if (!acc[homeOpID]) {
+                acc[homeOpID] = { nPasses: 0, passesCost: 0 };
+            }
+
+            // Increment passes count and add the charge
+            acc[homeOpID].nPasses += 1;
+            acc[homeOpID].passesCost += pass.charge;
+
+            return acc;
+        }, {} as Record<string, { nPasses: number; passesCost: number }>);
+
+        const hOpList = Object.entries(homeOperators).map(([opID, {nPasses, passesCost}]) => ({
+            homeOpID: opID,
+            nPasses,
+            passesCost: passesCost.toFixed(2),
+        }));
 
         if(req.query.format === 'csv') {
-            const richVopList = vOpList.map(vop => `${tollOpID},${new Date().toISOString()},${periodFrom},${periodTo},${vop.visitingOpID},${vop.nPasses},${vop.passesCost}`);
-            const csv = createCsv('tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,n_passes,passesCost', richVopList);
+            const richVopList = hOpList.map(hop => `${tagOpID},${new Date().toISOString()},${periodFrom},${periodTo},${hop.homeOpID},${hop.nPasses},${hop.passesCost}`);
+            const csv = createCsv('tagOpID,requestTimestamp,periodFrom,periodTo,homeOpID,n_passes,passesCost', richVopList);
 
             res.setHeader('Content-Type', 'text/csv');
             res.status(200).send(csv);
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json({
-                tollOpID,
+                tagOpID,
                 requestTimestamp: new Date().toISOString(),
                 periodFrom: periodFrom + ' 00:00',
                 periodTo: periodTo + ' 23:59',
-                vOpList,
+                hOpList,
             });
         }
     } catch (error) {
-        handleError(res, error, 'Failed to analyze passes');
+        handleError(res, error, 'Failed to calculate debt');
     }
 }
 
 export const payDebt = async (req: Request, res: Response) => {
-    const { tollOpID, tagOpID, date_from, date_to } = req.params;
+    const { tagOpID, tollOpID, date_from, date_to } = req.params;
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
 
