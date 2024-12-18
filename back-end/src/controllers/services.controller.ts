@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { Pass } from '../entities/pass.entity';
-import { Station } from '../entities/station.entity';
-import { Operator } from '../entities/operator.entity';
-import { Not, Between } from 'typeorm';
+import {Request, Response} from 'express';
+import {Pass} from '../entities/pass.entity';
+import {Station} from '../entities/station.entity';
+import {Operator} from '../entities/operator.entity';
+import {Between, Not} from 'typeorm';
 
 const formatDate = (date: string) => `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
 
@@ -14,6 +14,30 @@ const handleError = (res: Response, error: any, message: string) => {
     console.error(message, error);
     res.status(500).json({ error: message });
 };
+
+const getVopList = (passes: Pass[]) => {
+    // Group passes by visiting operator (tag.operator.id)
+    const visitingOperators = passes.reduce((acc, pass) => {
+        const visitingOpID = pass.tag.operator.id;
+
+        // Initialize the operator in the accumulator if not present
+        if (!acc[visitingOpID]) {
+            acc[visitingOpID] = { nPasses: 0, passesCost: 0 };
+        }
+
+        // Increment passes count and add the charge
+        acc[visitingOpID].nPasses += 1;
+        acc[visitingOpID].passesCost += pass.charge;
+
+        return acc;
+    }, {} as Record<string, { nPasses: number; passesCost: number }>);
+
+    return Object.entries(visitingOperators).map(([opID, {nPasses, passesCost}]) => ({
+        visitingOpID: opID,
+        nPasses,
+        passesCost: passesCost.toFixed(2),
+    }));
+}
 
 export const getTollStationPasses = async (req: Request, res: Response) => {
     const { tollStationID, date_from, date_to } = req.params;
@@ -138,28 +162,7 @@ export const getChargesBy = async (req: Request, res: Response) => {
             relations: ['tag', 'station', 'tag.operator'],
         });
 
-
-        // Group passes by visiting operator (tag.operator.id)
-        const visitingOperators = passes.reduce((acc, pass) => {
-            const visitingOpID = pass.tag.operator.id;
-
-            // Initialize the operator in the accumulator if not present
-            if (!acc[visitingOpID]) {
-                acc[visitingOpID] = { nPasses: 0, passesCost: 0 };
-            }
-
-            // Increment passes count and add the charge
-            acc[visitingOpID].nPasses += 1;
-            acc[visitingOpID].passesCost += pass.charge;
-
-            return acc;
-        }, {} as Record<string, { nPasses: number; passesCost: number }>);
-
-        const vOpList = Object.entries(visitingOperators).map(([opID, { nPasses, passesCost }]) => ({
-            visitingOpID: opID,
-            nPasses,
-            passesCost: passesCost.toFixed(2),
-        }));
+        const vOpList = getVopList(passes);
 
         if(req.query.format === 'csv') {
             const richVopList = vOpList.map(vop => `${tollOpID},${new Date().toISOString()},${periodFrom},${periodTo},${vop.visitingOpID},${vop.nPasses},${vop.passesCost}`);
@@ -230,3 +233,85 @@ export const getPassesCost = async (req: Request, res: Response) => {
         handleError(res, error, 'Failed to analyze passes');
     }
 };
+
+export const getDebt = async (req: Request, res: Response) => {
+    const { tollOpID, date_from, date_to } = req.params;
+    const periodFrom = formatDate(date_from);
+    const periodTo = formatDate(date_to);
+
+    try {
+        const tollOp = await Operator.findOneBy({ id: tollOpID });
+
+        if (!tollOp) {
+            res.status(400).json({ error: 'Toll operator not found' });
+            return;
+        }
+
+        const passes = await Pass.find({
+            where: {
+                station: { operator: tollOp },
+                tag: { operator: Not(tollOp) },
+                timestamp: Between(new Date(periodFrom), new Date(periodTo)),
+                paid: false,
+            },
+            relations: ['tag', 'station', 'tag.operator'],
+        });
+
+        const vOpList = getVopList(passes);
+
+        if(req.query.format === 'csv') {
+            const richVopList = vOpList.map(vop => `${tollOpID},${new Date().toISOString()},${periodFrom},${periodTo},${vop.visitingOpID},${vop.nPasses},${vop.passesCost}`);
+            const csv = createCsv('tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,n_passes,passesCost', richVopList);
+
+            res.setHeader('Content-Type', 'text/csv');
+            res.status(200).send(csv);
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json({
+                tollOpID,
+                requestTimestamp: new Date().toISOString(),
+                periodFrom: periodFrom + ' 00:00',
+                periodTo: periodTo + ' 23:59',
+                vOpList,
+            });
+        }
+    } catch (error) {
+        handleError(res, error, 'Failed to analyze passes');
+    }
+}
+
+export const payDebt = async (req: Request, res: Response) => {
+    const { tollOpID, tagOpID, date_from, date_to } = req.params;
+    const periodFrom = formatDate(date_from);
+    const periodTo = formatDate(date_to);
+
+    try {
+        const tollOp = await Operator.findOneBy({ id: tollOpID });
+        const tagOp = await Operator.findOneBy({ id: tagOpID });
+
+        if (!tollOp || !tagOp) {
+            res.status(400).json({ error: 'Toll or tag operator not found' });
+            return;
+        }
+
+        const passes = await Pass.find({
+            where: {
+                station: { operator: tollOp },
+                tag: { operator: tagOp },
+                timestamp: Between(new Date(periodFrom), new Date(periodTo)),
+                paid: false,
+            }
+        });
+        let totalCost = 0;
+
+        for (const pass of passes) {
+            pass.paid = true;
+            totalCost += pass.charge;
+            await pass.save();
+        }
+
+        res.status(200).json({ status: `OK`, totalCost });
+    } catch (error) {
+        handleError(res, error, 'Failed to pay debt');
+    }
+}
