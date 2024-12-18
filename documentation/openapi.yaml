@@ -273,6 +273,7 @@ paths:
                     type: string
                     description: Error information.
                     example: Error modifying user.
+
   /api/tollStationPasses/{tollStationID}/{date_from}/{date_to}:
     get:
       summary: Get Toll Station Passes
@@ -375,7 +376,6 @@ paths:
                     example: Toll station not found.
         '500':
           description: Error retrieving passes.
-
   /api/passAnalysis/{stationOpID}/{tagOpID}/{date_from}/{date_to}:
     get:
       summary: Get Pass Analysis
@@ -481,7 +481,6 @@ paths:
                     example: Station or tag operator not found.
         '500':
           description: Error performing analysis.
-
   /api/passesCost/{tollOpID}/{tagOpID}/{date_from}/{date_to}:
     get:
       summary: Get Passes Cost
@@ -556,7 +555,6 @@ paths:
                 example: tollOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passesCost
         '500':
           description: Error retrieving cost.
-
   /api/chargesBy/{tollOpID}/{date_from}/{date_to}:
     get:
       summary: Get Charges By Operator
@@ -630,6 +628,135 @@ paths:
                 example: tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,nPasses,passesCost
         '500':
           description: Error retrieving charges.
+  /api/getDebt/{tagOpID}/{date_from}/{date_to}:
+    get:
+      summary: Get Debt of an Operator
+      description: Retrieves the total debt of a tag operator within a specified period to all toll operators.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Services
+      parameters:
+        - name: tagOpID
+          in: path
+          required: true
+          description: ID of the tags operator.
+          schema:
+            type: string
+        - name: date_from
+          in: path
+          required: true
+          description: Start date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: date_to
+          in: path
+          required: true
+          description: End date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Response format, either JSON or CSV.
+          schema:
+            type: string
+            enum: [ json, csv ]
+      responses:
+        '200':
+          description: Debt retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tagOpID:
+                    type: string
+                    example: AM
+                  requestTimestamp:
+                    type: string
+                    example: 2021-05-01T12:00:00Z
+                  periodFrom:
+                    type: string
+                    example: 2021-05-01 00:00
+                  periodTo:
+                    type: string
+                    example: 2021-06-01 23:59
+                  hOpList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        homeOpID:
+                          type: string
+                          example: EG
+                        nPasses:
+                          type: integer
+                          example: 150
+                        passesCost:
+                          type: number
+                          example: 300
+            text/csv:
+              schema:
+                type: string
+                example: tagOpID,requestTimestamp,periodFrom,periodTo,homeOpID,nPasses,passesCost
+        '500':
+          description: Error retrieving debt.
+  /api/payDebt/{tagOpID}/{tollOpID}/{date_from}/{date_to}:
+    put:
+      summary: Pay Debt
+      description: Pays the debt of a tag operator to a toll operator within a specified period.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Services
+      parameters:
+        - name: tagOpID
+          in: path
+          required: true
+          description: ID of the tag operator.
+          schema:
+            type: string
+        - name: tollOpID
+          in: path
+          required: true
+          description: ID of the toll operator.
+          schema:
+            type: string
+        - name: date_from
+          in: path
+          required: true
+          description: Start date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: date_to
+          in: path
+          required: true
+          description: End date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Response format, either JSON or CSV.
+          schema:
+            type: string
+            enum: [ json, csv ]
+      responses:
+        '200':
+          description: Debt paid successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                  totalCost:
+                    type: number
+                    example: 300
+        '500':
+          description: Error paying debt.
+
   /api/login:
     post:
       summary: Login
@@ -707,6 +834,66 @@ paths:
                     type: string
                     description: Status of the operation.
                     example: OK
+
+  /api/stations:
+    get:
+        summary: Get Stations
+        description: Retrieves a list of all toll stations.
+        security:
+            - ObservatoryAuth: [ ]
+        tags:
+            - Utilities
+        responses:
+            '200':
+              description: Stations retrieved successfully.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                        stations:
+                          type: array
+                          items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  example: AM01
+                                name:
+                                  type: string
+                                  example: Σταθμός Διοδίων Κλειδίου Μετωπικά (Προς Αθήνα)
+            '500':
+              description: Error retrieving stations.
+
+  /api/operators:
+    get:
+      summary: Get Operators
+      description: Retrieves a list of all toll operators.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Utilities
+      responses:
+        '200':
+          description: Operators retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  operators:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: AM
+                        name:
+                          type: string
+                          example: aegeanmotorway
+        '500':
+          description: Error retrieving operators.
 components:
   securitySchemes:
     ObservatoryAuth:
