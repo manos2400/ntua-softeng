@@ -3,6 +3,7 @@ import cors from 'cors';
 import adminRoutes from './routes/admin.routes';
 import servicesRoutes from './routes/services.routes';
 import authRoutes from "./routes/auth.routes";
+import utilsRoutes from "./routes/utils.routes";
 
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
@@ -27,7 +28,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', authMiddleware, servicesRoutes);
-
+app.use('/api', authMiddleware, utilsRoutes);
 
 // Error Middleware
 app.use(errorHandler);
