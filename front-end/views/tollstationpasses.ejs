@@ -2,6 +2,8 @@
 
 <title>Toll Station Passes | TollNet Solutions</title>
 
+<script src="/check-token.js"></script>
+
 </head><body style="text-align:center;">
 
 <%- include('modules/header') %>
@@ -10,19 +12,30 @@
 
 	<div class="content">
 		
+		<div id="feed-get-stations"></div>
 		<h1>Toll Station Passes</h1>
 		
 		<p>
 			Get toll station passes for a specific period
 		</p>
 		<p>
-			<input
-				class="input is-info"
-				style="max-width: 12em;"
-				type="text"
-				placeholder="Station ID"
-				value = "AM03"
-			/>
+			<div class="dropdown" id="op-select" value="">
+				<div class="dropdown-trigger">
+					<button class="button" aria-haspopup="true" aria-controls="dropdown-menu-op">
+						<span>Choose station</span>
+						<span class="icon is-small">
+							<i class="fas fa-angle-down" aria-hidden="true"></i>
+						</span>
+					</button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu-op" role="menu">
+					<div class="dropdown-content">
+						<!-- added by js -->
+					</div>
+				</div>
+			</div>
+		</p>
+		<p>
 			<input
 				class="input is-info"
 				style="max-width: 20em;"
@@ -49,11 +62,46 @@
 
 <script>
 
+function initStations(){
+
+const responseEl = document.getElementById('feed-get-stations');
+const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
+
+//msg(responseEl, 'loading...');
+
+apiRequest('stations')
+	.then(data => {
+		responseEl.innerHTML="";
+		for(const i of data.stations){
+			op = document.createElement('a');
+			op.href = "#";
+			op.className = "dropdown-item";
+			op.innerHTML = i.name + " (" + i.id + ")";
+			opsSelect.appendChild(op);
+		}
+		applyDropdownFunctionality(document.getElementById('op-select'));
+		applyDropdownTriggers(document.getElementById('op-select'));
+	})
+	.catch(error => {
+		console.log(error);
+		msg(responseEl, 'error', error)
+	}
+);
+}
+
+initStations();
+
 function getPasses(){
 
 	const responseEl = document.getElementById('feed-getpasses');
 
-	const stationId = document.querySelector('input[placeholder="Station ID"]').value;
+	let stationId = document.querySelector('#op-select').getAttribute('value');
+	// split at parenthesis
+	stationId = stationId.split('(');
+	stationId = stationId[stationId.length - 1];
+	stationId = stationId.replace(')', '');
+	console.log('id',stationId);
+
 	const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
 	const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
 

@@ -7,18 +7,31 @@
 
 <main>
 	<div class="content">
+
+		<div id="feed-get-ops"></div>
+
+
 		<h1>Charges By</h1>
 		<p>
 			Get charges from all other tag operators for a specific period
 		</p>
 		<p>
-			<input
-				class="input is-info"
-				style="max-width: 15em;"
-				type="text"
-				placeholder="Operator ID"
-				value = "AM"
-			/>
+			
+			<div class="dropdown" id="op-select" value="">
+				<div class="dropdown-trigger">
+					<button class="button" aria-haspopup="true" aria-controls="dropdown-menu-op">
+						<span>Choose operator</span>
+						<span class="icon is-small">
+							<i class="fas fa-angle-down" aria-hidden="true"></i>
+						</span>
+					</button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu-op" role="menu">
+					<div class="dropdown-content">
+						<!-- added by js -->
+					</div>
+				</div>
+			</div>
 			<input
 				class="input is-info"
 				style="max-width: 15em;"
@@ -51,7 +64,9 @@
 					<a href="#" class="dropdown-item"> json </a>
 				  </div>
 				</div>
-			  </div>
+			</div>
+			
+
 		</p>
 		<p>
 			<button class="button is-info is-dark" onclick="getCharges()">Get Charges</button>
@@ -63,6 +78,36 @@
 </main>
 
 <script>
+
+function initOps(){
+
+	const responseEl = document.getElementById('feed-get-ops');
+	const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
+	
+	//msg(responseEl, 'loading...');
+
+	apiRequest('operators')
+		.then(data => {
+			responseEl.innerHTML="";
+			for(const i of data.operators){
+				op = document.createElement('a');
+				op.href = "#";
+				op.className = "dropdown-item";
+				op.innerHTML = i.name + " (" + i.id + ")";
+				opsSelect.appendChild(op);
+			}
+			applyDropdownFunctionality(document.getElementById('op-select'));
+			applyDropdownTriggers(document.getElementById('op-select'));
+		})
+		.catch(error => {
+			console.log(error);
+			msg(responseEl, 'error', error)
+		}
+	);
+}
+
+initOps();
+
 
 
 function printResult(final_data_list){
@@ -96,7 +141,13 @@ function getCharges(){
 	
 	const responseEl = document.getElementById('feed-getcharges');
 
-	const opid = document.querySelector('input[placeholder="Operator ID"]').value;
+	let opid = document.querySelector('#op-select').getAttribute('value');
+	opid = opid.match(/\(([^)]+)\)/);
+	if(opid && opid.length > 1){
+		opid = opid[1];
+	} else {
+		opid = null;
+	}
 	const from = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
 	const to = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
 	const format = document.querySelector('#format-select').getAttribute('value');

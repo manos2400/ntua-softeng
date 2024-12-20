@@ -6,6 +6,14 @@
 - npm | `npm -v` | `sudo apt install npm`
 - pnpm | `pnpm -v` | `curl -fsSL https://get.pnpm.io/install.sh | sh -`
 
+## Backend
+
+```
+cd back-end
+pnpm install # build (once after every change)
+pnpm run dev # start
+```
+
 ## Database
 
 ```
@@ -13,14 +21,6 @@ cd tmp-help-files # contains compose.yaml
 docker compose up -d # start
 curl -X POST http://localhost:9115/api/admin/resetpasses # initialize db by adding the first (admin) user
 docker compose down # stop
-```
-
-## Backend
-
-```
-cd back-end
-pnpm install # build (once after every change)
-pnpm run dev # start
 ```
 
 ## CLI
@@ -39,7 +39,7 @@ npm install commander # install (once)
 ```
 cd front-end
 npm init -y # creates package.json (once)
-npm install express ejs cookie-parser (once)
+npm install express ejs cookie-parser # (once)
 
 node server.js # start
 ```

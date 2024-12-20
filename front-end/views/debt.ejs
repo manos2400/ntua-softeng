@@ -1,0 +1,205 @@
+<%- include('modules/top') %>
+
+<title>Debt | TollNet Solutions</title>
+
+<style>
+body{
+    text-align:center;
+}
+@media (max-width: 768px) {
+    .box{
+        background-color: transparent;
+    }
+    .box p{
+        text-shadow: 3px 3px 5px #000000;
+        color: white;
+        font-weight:bold;
+    }
+}
+
+</style>
+
+</head><body style="text-align:center;">
+
+<%- include('modules/header') %>
+
+<main>
+
+	<div class="content">
+		
+		
+		<h1>Debt</h1>
+		<div id="feed-glob-debt"></div>
+
+		<p>
+			Get the debt of all operators
+		</p>
+		<p>
+			<div class="dropdown" id="op-select" value="">
+				<div class="dropdown-trigger">
+					<button class="button" aria-haspopup="true" aria-controls="dropdown-menu-op">
+						<span>Choose tag operator</span>
+						<span class="icon is-small">
+							<i class="fas fa-angle-down" aria-hidden="true"></i>
+						</span>
+					</button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu-op" role="menu">
+					<div class="dropdown-content">
+						<!-- added by js -->
+					</div>
+				</div>
+			</div>
+			<input
+				class="input is-info"
+				style="max-width: 15em;"
+				type="text"
+				placeholder="Start date (YYYYMMDD)"
+				value = "20220101"
+			/>
+			<input
+				class="input is-info"
+				style="max-width: 15em;"
+				type="text"
+				placeholder="End date (YYYYMMDD)"
+				value = "20230101"
+			/>
+		</p>
+		<p>
+			<button class="button is-info" onclick="getAllDebt()">Get Debt</button>
+		</p>
+
+
+		<div class="skeleton-lines" id="content-debts">
+		</div>
+
+		
+
+	</div>
+</main>
+
+<script>
+
+const responseElDebtPage = document.getElementById('feed-glob-debt');
+
+function initOps(){
+
+const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
+
+//msg(responseEl, 'loading...');
+
+apiRequest('operators')
+	.then(data => {
+		responseElDebtPage.innerHTML="";
+		for(const i of data.operators){
+			op = document.createElement('a');
+			op.href = "#";
+			op.className = "dropdown-item";
+			op.innerHTML = i.name + " (" + i.id + ")";
+			opsSelect.appendChild(op);
+		}
+		applyDropdownFunctionality(document.getElementById('op-select'));
+		applyDropdownTriggers(document.getElementById('op-select'));
+	})
+	.catch(error => {
+		console.log(error);
+		msg(responseElDebtPage, 'error', error)
+	}
+);
+}
+
+initOps();
+
+const res = document.getElementById('content-debts');
+
+function getAllDebt(){
+
+	responseElDebtPage.innerHTML = '';
+
+	// get list of ops
+
+	// check if date input exists
+	const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]');
+	const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]');
+	const start = startDate ? startDate.value : '';
+	const end = endDate ? endDate.value : '';
+
+	let opid = document.querySelector('#op-select').getAttribute('value');
+	opid = opid.match(/\(([^)]+)\)/);
+	if(opid && opid.length > 1){
+		opid = opid[1];
+	} else {
+		opid = null;
+	}
+
+	if (start.length != 8 || end.length != 8){
+		msg(responseElDebtPage, 'error', 'Invalid date format');
+		return;
+	}
+
+	if (!opid){
+		msg(responseElDebtPage, 'error', 'Please select an operator');
+		return;
+	}
+
+	apiRequest('getDebt/' + opid + '/' + start + '/' + end + '?format=json')
+		.then(data => {
+
+			let html = `
+				<table class="table"><thead></thead>
+				<tbody>
+					<tr><th title='operator name (operator ID)'>To</th><th>Amount</th><th></th></tr>
+			`;
+
+			for(const h of data.hOpList){
+				html += `
+					<tr>
+						<td>${h.homeOpID}</td>
+						<td title="${h.nPasses} passes">${h.passesCost}</td>
+						<td><button class="button is-success" onclick="payDebt(this, '${opid}', '${h.homeOpID}', '${start}', '${end}')">Pay</button></td>
+					</tr>
+				`;
+			}
+
+			html += `
+				</tbody>
+			`;
+
+			res.innerHTML = html;
+
+		})
+		.catch(error => {
+			msg(responseElDebtPage, 'error', error)
+		}
+	);
+
+}
+
+
+function payDebt(thisEl, from, to, start, end){
+
+	const fromOp = from;
+	const toOp = to;
+	const startDate = start;
+	const endDate = end;
+
+	apiRequest('payDebt/' + fromOp + '/' + toOp + '/' + startDate + '/' + endDate + '?format=json', 'PUT')
+		.then(data => {
+			msg(thisEl.parentElement, 'success', 'Paid')
+		})
+		.catch(error => {
+			msg(responseEl, 'error', error)
+		}
+	);
+
+}
+
+
+
+
+
+</script>
+
+<%- include('modules/bottom') %>
+
+

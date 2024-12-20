@@ -40,6 +40,13 @@ app.get('/admin', async (req, res) => {
         res.render('401', { title: '401 Page' });
     }
 });
+app.get('/debt', async (req, res) => {
+    if (await checkToken()) {
+        res.render('debt', { title: 'Debt Page' });
+    } else {
+        res.render('401', { title: '401 Page' });
+    }
+});
 app.get('/chargesBy', (req, res) => {
     res.render('chargesBy', { title: 'Charges By Page' });
 });

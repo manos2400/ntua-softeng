@@ -1,3 +1,31 @@
+function applyDropdownFunctionality(dropdownEl){
+  const dropdownTrigger = dropdownEl.querySelector('.dropdown-trigger');
+  const dropdownButton = dropdownTrigger.querySelector('.button');
+  const dropdownItems = dropdownEl.querySelectorAll('.dropdown-item');
+  dropdownTrigger.addEventListener('click', () => {
+      dropdownEl.classList.toggle('is-active');
+  });
+  dropdownItems.forEach(item => {
+      item.addEventListener('click', (event) => {
+          event.preventDefault();
+          const selection = item.textContent.trim();
+          dropdownButton.querySelector('span').textContent = selection;
+          dropdownEl.setAttribute('value', selection);
+          dropdownEl.classList.remove('is-active');
+      });
+  });
+}
+
+function applyDropdownTriggers(dd_parent){
+  dd_parent.querySelectorAll('.dropdown-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+        const dropdown = trigger.closest('.dropdown');
+        dropdown.classList.toggle('is-active');
+    });
+  });
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
 
@@ -26,24 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ------------------ DROPDOWN ------------------
 
+
+
   let dds = document.querySelectorAll('.dropdown');
   dds.forEach(dd => {
-    const dropdown = dd;
-    const dropdownTrigger = dropdown.querySelector('.dropdown-trigger');
-    const dropdownButton = dropdownTrigger.querySelector('.button');
-    const dropdownItems = dropdown.querySelectorAll('.dropdown-item');
-    dropdownTrigger.addEventListener('click', () => {
-      dropdown.classList.toggle('is-active');
-    });
-    dropdownItems.forEach(item => {
-      item.addEventListener('click', (event) => {
-        event.preventDefault();
-        const selection = item.textContent.trim();
-        dropdownButton.querySelector('span').textContent = selection;
-        dropdown.setAttribute('value', selection);
-        dropdown.classList.remove('is-active');
-      });
-    });
+    applyDropdownFunctionality(dd);
   });
 
 

@@ -10,26 +10,43 @@
 
 	<div class="content">
 		
+		<div id="feed-get-ops"></div>
 		<h1>Passes Cost</h1>
 
 		<p>
 			Get the cost of passes performed by a specific tag operator in the road of another operator
 		</p>
 		<p>
-			<input
-				class="input is-info"
-				style="max-width: 15em;"
-				type="text"
-				placeholder="Station Operator ID"
-				value = "AM"
-			/>
-			<input
-				class="input is-info"
-				style="max-width: 15em;"
-				type="text"
-				placeholder="Tag Operator ID"
-				value = "AM"
-			/>
+			<div class="dropdown" id="op-select" value="">
+				<div class="dropdown-trigger">
+					<button class="button" aria-haspopup="true" aria-controls="dropdown-menu-opstation">
+						<span>Choose station operator</span>
+						<span class="icon is-small">
+							<i class="fas fa-angle-down" aria-hidden="true"></i>
+						</span>
+					</button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu-opstation" role="menu">
+					<div class="dropdown-content">
+						<!-- added by js -->
+					</div>
+				</div>
+			</div>
+			<div class="dropdown" id="op-tag-select" value="">
+				<div class="dropdown-trigger">
+					<button class="button" aria-haspopup="true" aria-controls="dropdown-menu-optag">
+						<span>Choose tag operator</span>
+						<span class="icon is-small">
+							<i class="fas fa-angle-down" aria-hidden="true"></i>
+						</span>
+					</button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu-optag" role="menu">
+					<div class="dropdown-content">
+						<!-- added by js -->
+					</div>
+				</div>
+			</div>
 		</p>
 		<p>
 			<input
@@ -78,12 +95,57 @@
 
 <script>
 
+function initOps(){
+
+const responseEl = document.getElementById('feed-get-ops');
+const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
+const tagSelect = document.getElementById('op-tag-select').querySelector('.dropdown-content');
+
+//msg(responseEl, 'loading...');
+
+apiRequest('operators')
+	.then(data => {
+		responseEl.innerHTML="";
+		for(const i of data.operators){
+			op = document.createElement('a');
+			op.href = "#";
+			op.className = "dropdown-item";
+			op.innerHTML = i.name + " (" + i.id + ")";
+			opsSelect.appendChild(op);
+			tagSelect.appendChild(op.cloneNode(true));
+		}
+		applyDropdownFunctionality(document.getElementById('op-select'));
+		applyDropdownTriggers(document.getElementById('op-select'));
+		applyDropdownFunctionality(document.getElementById('op-tag-select'));
+		applyDropdownTriggers(document.getElementById('op-tag-select'));
+	})
+	.catch(error => {
+		console.log(error);
+		msg(responseEl, 'error', error)
+	}
+);
+}
+
+initOps();
+
 function getCost(){
 	
 	const responseEl = document.getElementById('feed-getcost');
 
-	const stationOp = document.querySelector('input[placeholder="Station Operator ID"]').value;
-	const tagOp = document.querySelector('input[placeholder="Tag Operator ID"]').value;
+	let stationOp = document.querySelector('#op-select').getAttribute('value');
+	stationOp = stationOp.match(/\(([^)]+)\)/);
+	if(stationOp && stationOp.length > 1){
+		stationOp = stationOp[1];
+	} else {
+		stationOp = null;
+	}
+	let tagOp = document.querySelector('#op-tag-select').getAttribute('value');
+	tagOp = tagOp.match(/\(([^)]+)\)/);
+	if(tagOp && tagOp.length > 1){
+		tagOp = tagOp[1];
+	} else {
+		tagOp = null;
+	}
 	const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
 	const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
 	const format = document.querySelector('#format-select').getAttribute('value');
