@@ -48,7 +48,7 @@
 			/>
 		</p>
 		<p>
-			
+			<!--
 			<div class="dropdown" id="format-select" value="">
 				<div class="dropdown-trigger">
 				  <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
@@ -64,7 +64,7 @@
 					<a href="#" class="dropdown-item"> json </a>
 				  </div>
 				</div>
-			</div>
+			</div>-->
 			
 
 		</p>
@@ -150,7 +150,8 @@ function getCharges(){
 	}
 	const from = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
 	const to = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
-	const format = document.querySelector('#format-select').getAttribute('value');
+	//const format = document.querySelector('#format-select').getAttribute('value');
+	const format = 'json';
 
 	if (!format) {
 		msg(responseEl, 'error', 'Please choose a format');

@@ -7,7 +7,7 @@ cd testing
 
 To test the backend use:
 ```
-./test API
+./test api
 
 # or use -v for more details
 ./test -v api
