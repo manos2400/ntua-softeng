@@ -11,8 +11,10 @@ test_logout (){
     eko $VERBOSE NC ">>> $RESPONSE"
 
     # cli
-    if echo "$RESPONSE" | grep -q '???'; then
-        eko $VERBOSE GREEN "[???]"
+    if echo "$RESPONSE" | grep -q 'Logged out successfully.'; then
+        eko $VERBOSE GREEN "[Logged out successfully]"
+    elif echo "$RESPONSE" | grep -q 'No active session found.'; then
+        eko $VERBOSE GREEN "[No active session found (already logged out)]"
 
     # curl
     elif echo "$RESPONSE" | grep -q '{"message":"Internal server error"}'; then

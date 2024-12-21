@@ -71,6 +71,8 @@ test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AMBB/20220101/
 test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20240101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "tollStationPasses [JSON, good token, inverse dates]"
 test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20240101/20230101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "tollStationPasses [CSV, good token, inverse dates]"
 test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20220101/20230101?format=json -H $AUTH_HEADER_BAD" $VERBOSE "tollStationPasses [JSON, bad token]"
+test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/1/1?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "tollStationPasses [JSON, bad dates]"
+test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/1/1?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "tollStationPasses [CSV, bad dates]"
 test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20220101/20230101?format=csv -H $AUTH_HEADER_BAD" $VERBOSE "tollStationPasses [CSV, bad token]"
 test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20220101/20230101?format=json" $VERBOSE "tollStationPasses [JSON, no token]"
 test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20220101/20230101?format=csv" $VERBOSE "tollStationPasses [CSV, no token]"

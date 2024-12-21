@@ -25,5 +25,3 @@ View the usage:
 ```
 ./test -h
 ```
-
->> TIP: The script checks if one of the expected outputs appear. Use verbose mode to confirm the output is correct.

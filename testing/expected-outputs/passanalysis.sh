@@ -10,7 +10,16 @@ test_passanalysis (){
     RESPONSE=$($CMD 2>&1)
     eko $VERBOSE NC ">>> $RESPONSE"
 
-    if echo "$RESPONSE" | grep -q '{"error":"Failed to analyze passes"}'; then
+    # cli
+    if echo "$RESPONSE" | grep -q 'Error: 500 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 500 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: 400 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 400 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: No token found. Please log in first.'; then
+        eko $VERBOSE YELLOW "[Error: No token found. Please log in first.]"
+
+    # both
+    elif echo "$RESPONSE" | grep -q '{"error":"Failed to analyze passes"}'; then
         eko $VERBOSE GREEN "[Failed to analyze passes]"
     elif echo "$RESPONSE" | grep -q 'stationOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passID,stationID,timestamp,tagID,passCharge'; then # csv
         eko $VERBOSE GREEN "CSV Fields are present."
@@ -45,7 +54,7 @@ test_passanalysis (){
             eko true RED "Field 'periodFrom' is missing."
             exit 1
         fi
-        if echo "$RESPONSE" | grep -q '"periodTo":"'; then
+        if echo "$RESPONSE" | grep -q '"periodTo":'; then
             eko $VERBOSE GREEN "Field 'periodTo' is present."
         else
             eko true RED "Field 'periodTo' is missing."

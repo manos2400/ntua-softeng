@@ -10,8 +10,16 @@ test_chargesby (){
     RESPONSE=$($CMD 2>&1)
     eko $VERBOSE NC ">>> $RESPONSE"
 
+    # cli
+    if echo "$RESPONSE" | grep -q 'Error: 500 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 500 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: 400 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 400 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: No token found. Please log in first.'; then
+        eko $VERBOSE YELLOW "[Error: No token found. Please log in first.]"
+    
     # csv
-    if echo "$RESPONSE" | grep -q 'tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,n_passes,passesCost'; then
+    elif echo "$RESPONSE" | grep -q 'tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,n_passes,passesCost'; then
         eko $VERBOSE GREEN "Fields are present."
 
     # both

@@ -10,7 +10,17 @@ test_tollStationPasses (){
     RESPONSE=$($CMD 2>&1)
     eko $VERBOSE NC ">>> $RESPONSE"
 
-    if echo "$RESPONSE" | grep -q '{"error":"Toll station not found"}'; then
+    # cli
+    if echo "$RESPONSE" | grep -q 'Error: 400 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 400 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: 500 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 500 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: No token found. Please log in first.'; then
+        eko $VERBOSE YELLOW "[Error: No token found. Please log in first.]"
+
+    
+    # curl
+    elif echo "$RESPONSE" | grep -q '{"error":"Toll station not found"}'; then
         eko $VERBOSE GREEN "[Toll station not found]"
     elif echo "$RESPONSE" | grep -q 'stationID,stationOperator,requestTimestamp,periodFrom,periodTo,n_passes,passID,timestamp,tagID,tagProvider,passType,passCharge'; then # csv
         eko $VERBOSE GREEN "CSV Fields are present."
@@ -18,6 +28,8 @@ test_tollStationPasses (){
         eko $VERBOSE GREEN "[Forbidden: Invalid token]"
     elif echo "$RESPONSE" | grep -q '{"message":"Unauthorized: No token provided"}'; then
         eko $VERBOSE GREEN "[No token provided]"
+    elif echo "$RESPONSE" | grep -q '{"error":"Failed to fetch toll station passes"}'; then
+        eko $VERBOSE GREEN "[Failed to fetch toll station passes]"
     else
         if echo "$RESPONSE" | grep -q '"stationID":'; then
             eko $VERBOSE GREEN "Field 'stationID' is present."

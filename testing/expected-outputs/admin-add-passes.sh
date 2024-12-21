@@ -12,6 +12,10 @@ test_admin_add_passes (){
 
     if echo "$RESPONSE" | grep -q '{"status":"OK"}'; then
         eko $VERBOSE GREEN "Field 'status' is present."
+    elif echo "$RESPONSE" | grep -q '"status": "OK"'; then
+        eko $VERBOSE GREEN "Field 'status' is present."
+    elif echo "$RESPONSE" | grep -q 'Error: No token found. Please log in first.'; then
+        eko $VERBOSE YELLOW "[Error: No token found. Please log in first.]"
     elif echo "$RESPONSE" | grep -q '{"status":"failed","info":"No file uploaded."}'; then
         eko $VERBOSE GREEN "Field 'status' and 'info' are present."
         eko $VERBOSE YELLOW "No file uploaded."

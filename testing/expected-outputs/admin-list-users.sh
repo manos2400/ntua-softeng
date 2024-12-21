@@ -12,6 +12,8 @@ test_admin_list_users (){
 
     if echo "$RESPONSE" | grep -q '{"status":"failed","info":"Error retrieving users."}'; then
         eko $VERBOSE GREEN "[Error retrieving users]"
+    elif echo "$RESPONSE" | grep -q 'Error: No token found. Please log in first.'; then
+        eko $VERBOSE YELLOW "[Error: No token found. Please log in first.]"
     elif echo "$RESPONSE" | grep -q '\['; then
         eko $VERBOSE GREEN "List is present."
     elif echo "$RESPONSE" | grep -q '{"message":"Forbidden: Invalid token"}'; then

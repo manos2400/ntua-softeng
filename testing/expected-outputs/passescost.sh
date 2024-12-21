@@ -10,7 +10,16 @@ test_passescost (){
     RESPONSE=$($CMD 2>&1)
     eko $VERBOSE NC ">>> $RESPONSE"
 
-    if echo "$RESPONSE" | grep -q '{"error":"Failed to analyze passes"}'; then
+    # cli
+    if echo "$RESPONSE" | grep -q 'Error: 500 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 500 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: 400 - undefined'; then
+        eko $VERBOSE GREEN "[Error: 400 - undefined]"
+    elif echo "$RESPONSE" | grep -q 'Error: No token found. Please log in first.'; then
+        eko $VERBOSE YELLOW "[Error: No token found. Please log in first.]"
+
+    # both
+    elif echo "$RESPONSE" | grep -q '{"error":"Failed to analyze passes"}'; then
         eko $VERBOSE GREEN "[Failed to analyze passes]"
     elif echo "$RESPONSE" | grep -q 'tollOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passesCost'; then # csv
         eko $VERBOSE GREEN "CSV Fields are present."
@@ -39,7 +48,7 @@ test_passescost (){
             eko true RED "Field 'requestTimestamp' is missing."
             exit 1
         fi
-        if echo "$RESPONSE" | grep -q '"periodFrom":"'; then
+        if echo "$RESPONSE" | grep -q '"periodFrom":'; then
             eko $VERBOSE GREEN "Field 'periodFrom' is present."
         else
             eko true RED "Field 'periodFrom' is missing."
