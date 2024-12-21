@@ -14,7 +14,7 @@ YELLOW='\033[0;93m'
 NC='\033[0m' # No Color
 
 eko() {
-    # eg eko RED "Hello, World!"
+    # eg: eko RED "Hello, World!"
     if [ "$1" = true ]; then
         echo -e "${!2}${3}${NC}"
     fi

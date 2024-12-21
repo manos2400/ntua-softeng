@@ -1,0 +1,70 @@
+#!/bin/bash
+
+test_passescost (){
+
+    CMD=$1
+    VERBOSE=$2
+    TITLE=$3
+    eko true MAGENTA ">>> $TITLE"
+    eko $VERBOSE MAGENTA ">>> $CMD"
+    RESPONSE=$($CMD 2>&1)
+    eko $VERBOSE NC ">>> $RESPONSE"
+
+    if echo "$RESPONSE" | grep -q '{"error":"Failed to analyze passes"}'; then
+        eko $VERBOSE GREEN "[Failed to analyze passes]"
+    elif echo "$RESPONSE" | grep -q 'tollOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passesCost'; then # csv
+        eko $VERBOSE GREEN "CSV Fields are present."
+    elif echo "$RESPONSE" | grep -q 'Toll or tag operator not found'; then
+        eko $VERBOSE GREEN "[Toll or tag operator not found]"
+    elif echo "$RESPONSE" | grep -q '{"message":"Forbidden: Invalid token"}'; then
+        eko $VERBOSE GREEN "[Forbidden: Invalid token]"
+    elif echo "$RESPONSE" | grep -q '{"message":"Unauthorized: No token provided"}'; then
+        eko $VERBOSE GREEN "[No token provided]"
+    else
+        if echo "$RESPONSE" | grep -q '"tollOpID":'; then
+            eko $VERBOSE GREEN "Field 'tollOpID' is present."
+        else
+            eko true RED "Field 'tollOpID' is missing or wrong."
+            exit 1
+        fi
+        if echo "$RESPONSE" | grep -q '"tagOpID":'; then
+            eko $VERBOSE GREEN "Field 'tagOpID' is present."
+        else
+            eko true RED "Field 'tagOpID' is missing or wrong."
+            exit 1
+        fi
+        if echo "$RESPONSE" | grep -q '"requestTimestamp"'; then
+            eko $VERBOSE GREEN "Field 'requestTimestamp' is present."
+        else
+            eko true RED "Field 'requestTimestamp' is missing."
+            exit 1
+        fi
+        if echo "$RESPONSE" | grep -q '"periodFrom":"'; then
+            eko $VERBOSE GREEN "Field 'periodFrom' is present."
+        else
+            eko true RED "Field 'periodFrom' is missing."
+            exit 1
+        fi
+        if echo "$RESPONSE" | grep -q '"periodTo":'; then
+            eko $VERBOSE GREEN "Field 'periodTo' is present."
+        else
+            eko true RED "Field 'periodTo' is missing."
+            exit 1
+        fi
+        if echo "$RESPONSE" | grep -q '"n_passes"'; then
+            eko $VERBOSE GREEN "Field 'n_passes' is present ."
+        else
+            eko true RED "Field 'n_passes' is missing."
+            exit 1
+        fi
+        if echo "$RESPONSE" | grep -q '"passesCost"'; then
+            eko $VERBOSE GREEN "Field 'passesCost' is present."
+        else
+            eko true RED "Field 'passesCost' is missing."
+            exit 1
+        fi
+    fi
+    eko true GREEN "success\n"
+
+}
+
