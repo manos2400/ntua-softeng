@@ -112,67 +112,69 @@ initOps();
 
 const res = document.getElementById('content-debts');
 
-function getAllDebt(){
-
-	responseElDebtPage.innerHTML = '';
+function getAllDebt() {
+    responseElDebtPage.innerHTML = '';
 
 	// get list of ops
 
 	// check if date input exists
-	const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]');
-	const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]');
-	const start = startDate ? startDate.value : '';
-	const end = endDate ? endDate.value : '';
+    const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
+    const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
 
-	let opid = document.querySelector('#op-select').getAttribute('value');
-	opid = opid.match(/\(([^)]+)\)/);
-	if(opid && opid.length > 1){
-		opid = opid[1];
-	} else {
-		opid = null;
-	}
+    // Validating Date
+    const startValidation = isValidDate(startDate);
+    const endValidation = isValidDate(endDate);
 
-	if (start.length != 8 || end.length != 8){
-		msg(responseElDebtPage, 'error', 'Invalid date format');
-		return;
-	}
+    if (!startValidation.valid) {
+        msg(responseElDebtPage, 'error', startValidation.message);
+        return;
+    }
 
-	if (!opid){
-		msg(responseElDebtPage, 'error', 'Please select an operator');
-		return;
-	}
+    if (!endValidation.valid) {
+        msg(responseElDebtPage, 'error', endValidation.message);
+        return;
+    }
 
-	apiRequest('getDebt/' + opid + '/' + start + '/' + end + '?format=json')
-		.then(data => {
+    let opid = document.querySelector('#op-select').getAttribute('value');
+    opid = opid.match(/\(([^)]+)\)/);
+    if (opid && opid.length > 1) {
+        opid = opid[1];
+    } else {
+        opid = null;
+    }
 
-			let html = `
-				<table class="table"><thead></thead>
-				<tbody>
-					<tr><th title='operator name (operator ID)'>To</th><th>Amount</th><th></th></tr>
-			`;
+    if (!opid) {
+        msg(responseElDebtPage, 'error', 'Please select an operator.');
+        return;
+    }
 
-			for(const h of data.hOpList){
-				html += `
-					<tr>
-						<td>${h.homeOpID}</td>
-						<td title="${h.nPasses} passes">${h.passesCost}</td>
-						<td><button class="button is-success" onclick="payDebt(this, '${opid}', '${h.homeOpID}', '${start}', '${end}')">Pay</button></td>
-					</tr>
-				`;
-			}
+    apiRequest('getDebt/' + opid + '/' + startDate + '/' + endDate + '?format=json')
+        .then(data => {
+            let html = `
+                <table class="table"><thead></thead>
+                <tbody>
+                    <tr><th title='operator name (operator ID)'>To</th><th>Amount</th><th></th></tr>
+            `;
 
-			html += `
-				</tbody>
-			`;
+            for (const h of data.hOpList) {
+                html += `
+                    <tr>
+                        <td>${h.homeOpID}</td>
+                        <td title="${h.nPasses} passes">${h.passesCost}</td>
+                        <td><button class="button is-success" onclick="payDebt(this, '${opid}', '${h.homeOpID}', '${startDate}', '${endDate}')">Pay</button></td>
+                    </tr>
+                `;
+            }
 
-			res.innerHTML = html;
+            html += `
+                </tbody>
+            `;
 
-		})
-		.catch(error => {
-			msg(responseElDebtPage, 'error', error)
-		}
-	);
-
+            res.innerHTML = html;
+        })
+        .catch(error => {
+            msg(responseElDebtPage, 'error', error);
+        });
 }
 
 
@@ -196,7 +198,36 @@ function payDebt(thisEl, from, to, start, end){
 
 
 
+function isValidDate(date) {
+    const dateRegex = /^\d{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
 
+    // Validating the date format
+    if (!dateRegex.test(date)) {
+        return {
+            valid: false,
+            message: 'Date must be in YYYYMMDD format with valid year, month, and day.'
+        };
+    }
+
+    //Validate if it's a real date
+    const year = parseInt(date.substring(0, 4), 10);
+    const month = parseInt(date.substring(4, 6), 10) - 1; 
+    const day = parseInt(date.substring(6, 8), 10);
+
+    const dt = new Date(year, month, day);
+    if (
+        dt.getFullYear() !== year ||
+        dt.getMonth() !== month ||
+        dt.getDate() !== day
+    ) {
+        return {
+            valid: false,
+            message: 'Invalid date. Please check the day, month, and year values.'
+        };
+    }
+
+    return { valid: true, message: '' };
+}
 
 </script>
 

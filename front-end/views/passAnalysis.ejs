@@ -130,6 +130,20 @@ function getAnalysis(){
 	const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
 	const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
 
+	//Date Valition
+	const startValidation = isValidDate(startDate);
+	const endValidation = isValidDate(endDate);
+	
+	if (!startValidation.valid) {
+        msg(responseEl, 'error', startValidation.message);
+        return;
+    }
+
+    if (!endValidation.valid) {
+        msg(responseEl, 'error', endValidation.message);
+        return;
+    }
+
 	if (!stationOp || !tagOp || !startDate || !endDate) {
 		msg(responseEl, 'error', 'Please enter all fields');
 		return;
@@ -176,6 +190,37 @@ function getAnalysis(){
 			msg(responseEl, 'error', error)
 		}
 	);
+}
+
+function isValidDate(date) {
+    const dateRegex = /^\d{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
+
+    // Validating the date format
+    if (!dateRegex.test(date)) {
+        return {
+            valid: false,
+            message: 'Date must be in YYYYMMDD format with valid year, month, and day.'
+        };
+    }
+
+    //Validate if it's a real date
+    const year = parseInt(date.substring(0, 4), 10);
+    const month = parseInt(date.substring(4, 6), 10) - 1; 
+    const day = parseInt(date.substring(6, 8), 10);
+
+    const dt = new Date(year, month, day);
+    if (
+        dt.getFullYear() !== year ||
+        dt.getMonth() !== month ||
+        dt.getDate() !== day
+    ) {
+        return {
+            valid: false,
+            message: 'Invalid date. Please check the day, month, and year values.'
+        };
+    }
+
+    return { valid: true, message: '' };
 }
 
 </script>
