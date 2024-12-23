@@ -756,6 +756,97 @@ paths:
                     example: 300
         '500':
           description: Error paying debt.
+  /api/tollStats/{tollOpID}/{date_from}/{date_to}:
+    get:
+      summary: Get Toll Station Stats
+      description: Retrieves statistics for a specific toll operator within a given time period.
+      security:
+        - ObservatoryAuth: [ ]
+      tags:
+        - Services
+      parameters:
+        - name: tollOpID
+          in: path
+          required: true
+          description: ID of the toll operator.
+          schema:
+            type: string
+        - name: date_from
+          in: path
+          required: true
+          description: Start date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: date_to
+          in: path
+          required: true
+          description: End date in YYYYMMDD format.
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Response format, either JSON or CSV.
+          schema:
+            type: string
+            enum: [ json, csv ]
+      responses:
+        '200':
+          description: Stats retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tollOpID:
+                    type: string
+                    example: AM
+                  requestTimestamp:
+                    type: string
+                    example: 2021-05-01T12:00:00Z
+                  periodFrom:
+                    type: string
+                    example: 2021-05-01 00:00
+                  periodTo:
+                    type: string
+                    example: 2021-06-01 23:59
+                  stats:
+                    type: object
+                    properties:
+                        totalPasses:
+                          type: integer
+                          example: 33
+                        totalRevenue:
+                          type: string
+                          example: 25.50
+                        mostPasses:
+                          type: string
+                          example: AM01
+                        mostRevenue:
+                          type: string
+                          example: AM03
+                        mostPassesWithHomeTag:
+                          type: string
+                          example: AM02
+                        mostRevenueWithHomeTag:
+                          type: string
+                          example: AM03
+            text/csv:
+              schema:
+                type: string
+                example: tollOpID,requestTimestamp,periodFrom,periodTo,totalPasses,totalRevenue,mostPasses,mostRevenue,mostPassesWithHomeTag,mostRevenueWithHomeTag
+        '400':
+          description: No toll operator found for the provided ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+                    example: Toll operator not found
+        '500':
+          description: Error retrieving stats.
 
   /api/login:
     post:
@@ -825,15 +916,6 @@ paths:
       responses:
         '200':
           description: User logged out successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    description: Status of the operation.
-                    example: OK
 
   /api/stations:
     get:
