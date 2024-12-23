@@ -354,7 +354,7 @@ export const getTollStats = async (req: Request, res: Response) => {
             relations: ['tag', 'station', 'tag.operator', 'station.operator'],
         });
 
-        if (!passes) {
+        if (passes.length === 0) {
             res.status(400).json({ error: 'No passes found in that time period' });
             return;
         }

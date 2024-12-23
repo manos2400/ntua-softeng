@@ -21,10 +21,6 @@ source ./expected-outputs/passanalysis.sh
 source ./expected-outputs/admin-user-mod.sh
 source ./expected-outputs/admin-list-users.sh
 source ./expected-outputs/admin-add-passes.sh
-source ./expected-outputs/get-stations.sh
-source ./expected-outputs/get-operators.sh
-source ./expected-outputs/get-debt.sh
-source ./expected-outputs/pay-debt.sh
 source ./expected-outputs/logout.sh
 
 # runtime vars
@@ -136,6 +132,25 @@ test_admin_add_passes "$CLI_PATH admin --addpasses --source $PASSES_CSV_PATH" $V
 # ======================= logout ======================= #
 test_logout "$CLI_PATH logout" $VERBOSE "logout"
 test_logout "$CLI_PATH logout" $VERBOSE "logout [again]"
+
+# ======================= tests after reset passes ======================= #
+curl -s -X POST $API_URL/admin/resetpasses -H $AUTH_HEADER_GOOD >> /dev/null
+test_healthcheck "$CLI_PATH healthcheck" $VERBOSE "healthcheck [after reset passes]"
+test_resetstations "$CLI_PATH resetstations" $VERBOSE "resetstations [after reset passes]"
+test_tollStationPasses "$CLI_PATH tollstationpasses --station AM03 --from 20220101 --to 20230101 --format json" $VERBOSE "tollStationPasses [JSON, after reset passes]"
+test_tollStationPasses "$CLI_PATH tollstationpasses --station AM03 --from 20220101 --to 20230101 --format csv" $VERBOSE "tollStationPasses [CSV, after reset passes]"
+test_chargesby "$CLI_PATH chargesby --opid AM --from 20220101 --to 20230101 --format json" $VERBOSE "chargesBy [JSON, after reset passes]"
+test_chargesby "$CLI_PATH chargesby --opid AM --from 20220101 --to 20230101 --format csv" $VERBOSE "chargesBy [CSV, after reset passes]"
+test_passescost "$CLI_PATH passescost --stationop AM --tagop AM --from 20220101 --to 20230101 --format json" $VERBOSE "passesCost [JSON, after reset passes]"
+test_passescost "$CLI_PATH passescost --stationop AM --tagop AM --from 20220101 --to 20230101 --format csv" $VERBOSE "passesCost [CSV, after reset passes]"
+test_passanalysis "$CLI_PATH passanalysis --stationop AM --tagop AM --from 20220101 --to 20230101 --format json" $VERBOSE "passAnalysis [JSON, after reset passes]"
+test_passanalysis "$CLI_PATH passanalysis --stationop AM --tagop AM --from 20220101 --to 20230101 --format csv" $VERBOSE "passAnalysis [CSV, after reset passes]"
+test_get_debt "$CLI_PATH getdebt --opid AM --from 20220101 --to 20220101 --format json" $VERBOSE "Get Debt [JSON, after reset passes]"
+test_get_debt "$CLI_PATH getdebt --opid AM --from 20220101 --to 20220101 --format csv" $VERBOSE "Get Debt [CSV, after reset passes]"
+test_pay_debt "$CLI_PATH paydebt --opid AM --from 20220101 --to 20230101 --format json" $VERBOSE "Pay Debt [JSON, after reset passes]"
+test_logout "$CLI_PATH logout" $VERBOSE "logout [after reset passes]"
+test_login "$CLI_PATH login --username admin --passw freepasses4all" $VERBOSE "login [correct credentials, after reset passes]"
+test_login "$CLI_PATH login --username admin --passw freepasses4all" $VERBOSE "login [correct credentials, after reset passes (again)]"
 
 ## end
 

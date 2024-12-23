@@ -25,6 +25,7 @@ source ./expected-outputs/get-stations.sh
 source ./expected-outputs/get-operators.sh
 source ./expected-outputs/get-debt.sh
 source ./expected-outputs/pay-debt.sh
+source ./expected-outputs/tollstats.sh
 source ./expected-outputs/logout.sh
 
 ## runtime vars
@@ -194,11 +195,47 @@ test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20220101?format=js
 test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/EG/20220101/20220101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, pay to other op]"
 test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/EG/20220101/20220101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, pay to other op (again)]"
 
+# ======================= Toll Stats ======================= #
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [JSON, good token]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [CSV, good token]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=json -H $AUTH_HEADER_BAD" $VERBOSE "Toll Stats [JSON, bad token]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=csv -H $AUTH_HEADER_BAD" $VERBOSE "Toll Stats [CSV, bad token]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=json" $VERBOSE "Toll Stats [JSON, no token]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=csv" $VERBOSE "Toll Stats [CSV, no token]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/202401/2023?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [JSON, bad dates]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/202401/2023?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [CSV, bad dates]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/1/1?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [JSON, bad dates]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/1/1?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [CSV, bad dates]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AA/202401/202301?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [JSON, wrong toll operator]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AA/202401/202301?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [CSV, wrong toll operator]"
+
 # ======================= logout ======================= #
 test_logout "curl -s -X POST $API_URL/logout -H $AUTH_HEADER_BAD" $VERBOSE "logout [bad token]"
 test_logout "curl -s -X POST $API_URL/logout -H $AUTH_HEADER_GOOD" $VERBOSE "logout [good token]"
 test_logout "curl -s -X POST $API_URL/logout" $VERBOSE "logout [no token]"
 test_logout "curl -s -X POST $API_URL/logout -H $AUTH_HEADER_GOOD" $VERBOSE "logout [good token (again)]"
+
+# ======================= tests after reset passes ======================= #
+curl -s -X POST $API_URL/admin/resetpasses -H $AUTH_HEADER_GOOD >> /dev/null
+test_healthcheck "curl -s -X GET $API_URL/admin/healthcheck" $VERBOSE "healthcheck [after reset passes]"
+test_resetstations "curl -s -X POST $API_URL/admin/resetstations" $VERBOSE "resetstations [after reset passes]"
+test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "tollStationPasses [JSON, good token, after reset passes]"
+test_tollStationPasses "curl -s -X GET $API_URL/tollStationPasses/AM03/20220101/20230101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "tollStationPasses [CSV, good token, after reset passes]"
+test_chargesby "curl -s -X GET $API_URL/chargesBy/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "chargesBy [JSON, good token, after reset passes]"
+test_chargesby "curl -s -X GET $API_URL/chargesBy/AM/20220101/20230101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "chargesBy [CSV, good token, after reset passes]"
+test_passescost "curl -s -X GET $API_URL/passesCost/AM/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "passesCost [JSON, good token, after reset passes]"
+test_passescost "curl -s -X GET $API_URL/passesCost/AM/AM/20220101/20230101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "passesCost [CSV, good token, after reset passes]"
+test_passanalysis "curl -s -X GET $API_URL/passAnalysis/AM/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "passAnalysis [JSON, good token, after reset passes]"
+test_passanalysis "curl -s -X GET $API_URL/passAnalysis/AM/AM/20220101/20230101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "passAnalysis [CSV, good token, after reset passes]"
+test_get_debt "curl -s -X GET $API_URL/getDebt/AM/20220101/20220101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Get Debt [JSON, good token, after reset passes]"
+test_get_debt "curl -s -X GET $API_URL/getDebt/AM/20220101/20220101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "Get Debt [CSV, good token, after reset passes]"
+test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, good token, after reset passes]"
+test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, good token, after reset passes (again)]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [JSON, good token, after reset passes]"
+test_tollstats "curl -s -X GET $API_URL/tollStats/AM/20220101/20230101?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "Toll Stats [CSV, good token, after reset passes]"
+test_logout "curl -s -X POST $API_URL/logout -H $AUTH_HEADER_GOOD" $VERBOSE "logout [good token, after reset passes]"
+test_login "curl -s -X POST $API_URL/login -H 'Content-Type: application/x-www-form-urlencoded' -d username=admin&password=freepasses4all" $VERBOSE "login [correct credentials, after reset passes]"
+test_login "curl -s -X POST $API_URL/login -H 'Content-Type: application/x-www-form-urlencoded' -d username=admin&password=freepasses4all" $VERBOSE "login [correct credentials, after reset passes (again)]"
 
 ## end
 
