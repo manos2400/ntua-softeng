@@ -332,3 +332,89 @@ export const payDebt = async (req: Request, res: Response) => {
         handleError(res, error, 'Failed to pay debt');
     }
 }
+
+export const getTollStats = async (req: Request, res: Response) => {
+    const { tollOpID, date_from, date_to } = req.params;
+    const periodFrom = formatDate(date_from);
+    const periodTo = formatDate(date_to);
+
+    try {
+        const tollOp = await Operator.findOneBy({ id: tollOpID });
+
+        if (!tollOp) {
+            res.status(400).json({ error: 'Toll operator not found' });
+            return;
+        }
+
+        const passes = await Pass.find({
+            where: {
+                station: { operator: tollOp },
+                timestamp: Between(new Date(periodFrom), new Date(periodTo)),
+            },
+            relations: ['tag', 'station', 'tag.operator', 'station.operator'],
+        });
+
+        const stations = Object.values(passes.reduce((acc, pass) => {
+            const stationID = pass.station.id;
+            if (!acc[stationID]) {
+                acc[stationID] = { id: stationID, nPasses: 0, revenue: 0, };
+            }
+
+            acc[stationID].nPasses += 1;
+            acc[stationID].revenue += pass.charge;
+
+            return acc;
+        } , {} as Record<string, { id: string, nPasses: number; revenue: number }>));
+
+        const homeStations = Object.values(passes.reduce((acc, pass) => {
+            const stationID = pass.station.id;
+            if(pass.station.operator.id === pass.tag.operator.id) {
+                if (!acc[stationID]) {
+                    acc[stationID] = { id: stationID, nPasses: 0, revenue: 0, };
+                }
+
+                acc[stationID].nPasses += 1;
+                acc[stationID].revenue += pass.charge;
+            }
+            return acc;
+        } , {} as Record<string, { id: string, nPasses: number; revenue: number }>));
+
+        const totalPasses = passes.length;
+        const totalRevenue = passes.reduce((sum, pass) => sum + pass.charge, 0);
+
+        const mostPasses = stations.sort((a, b) => b.nPasses - a.nPasses)[0];
+        const mostRevenue = stations.sort((a, b) => b.revenue - a.revenue)[0];
+
+        const mostPassesWithHomeTag = homeStations.sort((a, b) => b.nPasses - a.nPasses)[0];
+        const mostRevenueWithHomeTag = homeStations.sort((a, b) => b.revenue - a.revenue)[0];
+
+
+        if(req.query.format === 'csv') {
+            const csv = createCsv('tollOpID,requestTimestamp,periodFrom,periodTo,totalPasses,totalRevenue,mostPasses,mostRevenue,mostPassesWithHomeTag,mostRevenueWithHomeTag',
+                [[tollOpID, new Date().toISOString(), periodFrom, periodTo, totalPasses.toString(), totalRevenue.toFixed(2), mostPasses.id, mostRevenue.id, mostPassesWithHomeTag.id, mostRevenueWithHomeTag.id].join(',')]
+            );
+
+            res.setHeader('Content-Type', 'text/csv');
+            res.status(200).send(csv);
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json({
+                tollOpID,
+                requestTimestamp: new Date().toISOString(),
+                periodFrom,
+                periodTo,
+                stats: {
+                    totalPasses,
+                    totalRevenue: totalRevenue.toFixed(2),
+                    mostPasses: mostPasses.id,
+                    mostRevenue: mostRevenue.id,
+                    mostPassesWithHomeTag: mostPassesWithHomeTag.id,
+                    mostRevenueWithHomeTag: mostRevenueWithHomeTag.id
+                }
+
+            });
+        }
+    } catch (error) {
+        handleError(res, error, 'Failed to fetch toll stats');
+    }
+}
