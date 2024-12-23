@@ -59,6 +59,9 @@ app.get('/passesCost', (req, res) => {
 app.get('/tollStationPasses', (req, res) => {
     res.render('tollstationpasses', { title: 'Toll Station Passes Page' });
 });
+app.get('/statistics', (req, res) => {
+    res.render('statistics', { title: 'Statistics' });
+});
 app.get('*', (req, res) => {
     res.render('404', { title: '404 Page' });
 });

@@ -1,0 +1,170 @@
+<%- include('modules/top') %>
+
+<title>Statistics | TollNet Solutions</title>
+
+</head><body style="text-align:center;">
+
+<%- include('modules/header') %>
+
+<main>
+    <div class="content">
+        <div id="feed-get-ops"></div>
+        <h1>Statistics</h1>
+
+        <p>
+            Get the statistics for a specific toll operator over a defined period.
+        </p>
+        <p>
+            <div class="dropdown" id="op-select" value="">
+                <div class="dropdown-trigger">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu-opstation">
+                        <span>Choose toll operator</span>
+                        <span class="icon is-small">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu-opstation" role="menu">
+                    <div class="dropdown-content">
+                        <!-- added by js -->
+                    </div>
+                </div>
+            </div>
+        </p>
+        <p>
+            <input
+                class="input is-info"
+                style="max-width: 15em;"
+                type="text"
+                placeholder="Start date (YYYYMMDD)"
+                value="20220101"
+            />
+            <input
+                class="input is-info"
+                style="max-width: 15em;"
+                type="text"
+                placeholder="End date (YYYYMMDD)"
+                value="20230101"
+            />
+        </p>
+        <p>
+            <button class="button is-info is-dark" onclick="getStats()">Get Statistics</button>
+        </p>
+
+        <div id="feed-getstats"></div>
+    </div>
+</main>
+
+<script>
+function initOps() {
+    const responseEl = document.getElementById('feed-get-ops');
+    const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
+
+    apiRequest('operators')
+        .then(data => {
+            responseEl.innerHTML = "";
+            for (const i of data.operators) {
+                let op = document.createElement('a');
+                op.href = "#";
+                op.className = "dropdown-item";
+                op.innerHTML = i.name + " (" + i.id + ")";
+                opsSelect.appendChild(op);
+            }
+            applyDropdownFunctionality(document.getElementById('op-select'));
+            applyDropdownTriggers(document.getElementById('op-select'));
+        })
+        .catch(error => {
+            console.error(error);
+            msg(responseEl, 'error', error);
+        });
+}
+
+initOps();
+
+function getStats() {
+    const responseEl = document.getElementById('feed-getstats');
+    let tollOp = document.querySelector('#op-select').getAttribute('value');
+    tollOp = tollOp.match(/\(([^)]+)\)/);
+    if (tollOp && tollOp.length > 1) {
+        tollOp = tollOp[1];
+    } else {
+        tollOp = null;
+    }
+
+    const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
+    const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
+
+    // Validate dates
+    const startValidation = isValidDate(startDate);
+    const endValidation = isValidDate(endDate);
+
+    if (!startValidation.valid) {
+        msg(responseEl, 'error', startValidation.message);
+        return;
+    }
+    if (!endValidation.valid) {
+        msg(responseEl, 'error', endValidation.message);
+        return;
+    }
+
+    if (!tollOp || !startDate || !endDate) {
+        msg(responseEl, 'error', 'Please enter all fields.');
+        return;
+    }
+
+    const format = 'json';
+    const apiCall = `tollStats/${tollOp}/${startDate}/${endDate}?format=${format}`;
+
+    apiRequest(apiCall, 'GET', null, format)
+        .then(data => {
+            if (format === 'json') {
+                msg(responseEl, 'success', JSON.stringify(data.stats, null, 2));
+                const stats = data.stats;
+                const html = `
+                    <table class="table"><thead></thead>
+                    <tbody>
+                        <tr><th>Total Passes</th><td>${stats.totalPasses}</td></tr>
+                        <tr><th>Total Revenue</th><td>${stats.totalRevenue}</td></tr>
+                        <tr><th>Station with Most Passes</th><td>${stats.mostPasses}</td></tr>
+                        <tr><th>Station with Most Revenue</th><td>${stats.mostRevenue}</td></tr>
+                        <tr><th>Station with Most Passes (Home Tag)</th><td>${stats.mostPassesWithHomeTag}</td></tr>
+                        <tr><th>Station with Most Revenue (Home Tag)</th><td>${stats.mostRevenueWithHomeTag}</td></tr>
+                    </tbody>
+                `;
+                responseEl.innerHTML = html;
+            } else {
+                msg(responseEl, 'success', 'CSV format not implemented in this page.');
+            }
+        })
+        .catch(error => {
+            msg(responseEl, 'error', error);
+        });
+}
+
+function isValidDate(date) {
+    const dateRegex = /^\d{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
+
+    if (!dateRegex.test(date)) {
+        return {
+            valid: false,
+            message: 'Date must be in YYYYMMDD format with valid year, month, and day.'
+        };
+    }
+
+    const year = parseInt(date.substring(0, 4), 10);
+    const month = parseInt(date.substring(4, 6), 10) - 1;
+    const day = parseInt(date.substring(6, 8), 10);
+
+    const dt = new Date(year, month, day);
+    if (dt.getFullYear() !== year || dt.getMonth() !== month || dt.getDate() !== day) {
+        return {
+            valid: false,
+            message: 'Invalid date. Please check the day, month, and year values.'
+        };
+    }
+
+    return { valid: true, message: '' };
+}
+</script>
+
+<%- include('modules/bottom') %>
