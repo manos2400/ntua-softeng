@@ -32,19 +32,21 @@
 					</div>
 				</div>
 			</div>
-			<input
-				class="input is-info"
-				style="max-width: 15em;"
-				type="text"
-				placeholder="Start date (YYYYMMDD)"
-				value = "20220101"
+			<label for="startDate">Start Date:</label>
+            <input
+                id="startDate"
+                class="input is-info"
+                style="max-width: 15em;"
+                type="date"
+                value="2022-01-01"
 			/>
-			<input
-				class="input is-info"
-				style="max-width: 15em;"
-				type="text"
-				placeholder="End date (YYYYMMDD)"
-				value = "20230101"
+			<label for="endDate">End Date:</label>
+            <input
+                id="endDate"
+                class="input is-info"
+                style="max-width: 15em;"
+                type="date"
+                value="2023-01-01"
 			/>
 		</p>
 		<p>
@@ -148,23 +150,24 @@ function getCharges(){
 	} else {
 		opid = null;
 	}
-	const from = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
-	const to = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
+	// const from = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
+	// const to = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
 	//const format = document.querySelector('#format-select').getAttribute('value');
 
 	// Validate the dates
-    const fromValidation = isValidDate(from);
-    const toValidation = isValidDate(to);
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
 
-    if (!fromValidation.valid) {
-        msg(responseEl, 'error', fromValidation.message);
+    if (!startDate || !endDate) {
+        msg(responseEl, 'error', 'Please provide both start and end dates.');
         return;
     }
 
-    if (!toValidation.valid) {
-        msg(responseEl, 'error', toValidation.message);
-        return;
-    }
+	// Convert dates to the required format
+    const formattedStartDate = startDate.replace(/-/g, '');
+    const formattedEndDate = endDate.replace(/-/g, '');
+
+    
 
 	const format = 'json';
 
@@ -173,12 +176,15 @@ function getCharges(){
 		return;
 	}
 
-	if (!opid || !from || !to || !format) {
-		msg(responseEl, 'error', 'Please enter all fields');
-		return;
-	}
+	if (!opid || !startDate || !endDate || !format) {
+        msg(responseEl, 'error', 'Please enter all fields.');
+        return;
+    }
 
-	apiRequest(`chargesBy/${opid}/${from}/${to}?format=${format}`, 'GET', null, format)
+	const apiCall = `chargesBy/${opid}/${formattedStartDate}/${formattedEndDate}?format=${format}`;
+    //console.log(`API Call: ${apiCall}`);	
+
+	apiRequest(apiCall, 'GET')
 		.then(data => {
 
 			let final_data_list = {};
@@ -239,37 +245,6 @@ function getCharges(){
 	
 }
 
-
-function isValidDate(date) {
-    const dateRegex = /^\d{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
-
-    // Validating the date format
-    if (!dateRegex.test(date)) {
-        return {
-            valid: false,
-            message: 'Date must be in YYYYMMDD format with valid year, month, and day.'
-        };
-    }
-
-    //Validate if it's a real date
-    const year = parseInt(date.substring(0, 4), 10);
-    const month = parseInt(date.substring(4, 6), 10) - 1; 
-    const day = parseInt(date.substring(6, 8), 10);
-
-    const dt = new Date(year, month, day);
-    if (
-        dt.getFullYear() !== year ||
-        dt.getMonth() !== month ||
-        dt.getDate() !== day
-    ) {
-        return {
-            valid: false,
-            message: 'Invalid date. Please check the day, month, and year values.'
-        };
-    }
-
-    return { valid: true, message: '' };
-}
 
 
 </script>

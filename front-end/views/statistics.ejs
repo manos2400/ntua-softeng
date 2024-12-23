@@ -31,20 +31,22 @@
                 </div>
             </div>
         </p>
-        <p>
+        <p> 
+            <label for="startDate">Start Date:</label>
             <input
+                id="startDate"
                 class="input is-info"
                 style="max-width: 15em;"
-                type="text"
-                placeholder="Start date (YYYYMMDD)"
-                value="20220101"
+                type="date"
+                value="2022-01-01"
             />
+            <label for="endDate">End Date:</label>
             <input
+                id="endDate"
                 class="input is-info"
                 style="max-width: 15em;"
-                type="text"
-                placeholder="End date (YYYYMMDD)"
-                value="20230101"
+                type="date"
+                value="2023-01-01"
             />
         </p>
         <p>
@@ -91,21 +93,18 @@ function getStats() {
         tollOp = null;
     }
 
-    const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
-    const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
+    // Select date values
+    const startDate = document.querySelector('input[type="date"][id="startDate"]').value;
+    const endDate = document.querySelector('input[type="date"][id="endDate"]').value;
 
-    // Validate dates
-    const startValidation = isValidDate(startDate);
-    const endValidation = isValidDate(endDate);
-
-    if (!startValidation.valid) {
-        msg(responseEl, 'error', startValidation.message);
+    if (!startDate || !endDate) {
+        msg(responseEl, 'error', 'Please provide both start and end dates.');
         return;
     }
-    if (!endValidation.valid) {
-        msg(responseEl, 'error', endValidation.message);
-        return;
-    }
+
+    // Convert dates to the required format
+    const formattedStartDate = startDate.replace(/-/g, '');
+    const formattedEndDate = endDate.replace(/-/g, '');
 
     if (!tollOp || !startDate || !endDate) {
         msg(responseEl, 'error', 'Please enter all fields.');
@@ -113,8 +112,7 @@ function getStats() {
     }
 
     const format = 'json';
-    const apiCall = `tollStats/${tollOp}/${startDate}/${endDate}?format=${format}`;
-
+    const apiCall = `tollStats/${tollOp}/${formattedStartDate}/${formattedEndDate}?format=${format}`;
     apiRequest(apiCall, 'GET', null, format)
         .then(data => {
             if (format === 'json') {
@@ -133,7 +131,7 @@ function getStats() {
                 `;
                 responseEl.innerHTML = html;
             } else {
-                msg(responseEl, 'success', 'CSV format not implemented in this page.');
+                msg(responseEl, 'success', 'We do not use CSV here mate...');
             }
         })
         .catch(error => {
@@ -141,30 +139,6 @@ function getStats() {
         });
 }
 
-function isValidDate(date) {
-    const dateRegex = /^\d{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
-
-    if (!dateRegex.test(date)) {
-        return {
-            valid: false,
-            message: 'Date must be in YYYYMMDD format with valid year, month, and day.'
-        };
-    }
-
-    const year = parseInt(date.substring(0, 4), 10);
-    const month = parseInt(date.substring(4, 6), 10) - 1;
-    const day = parseInt(date.substring(6, 8), 10);
-
-    const dt = new Date(year, month, day);
-    if (dt.getFullYear() !== year || dt.getMonth() !== month || dt.getDate() !== day) {
-        return {
-            valid: false,
-            message: 'Invalid date. Please check the day, month, and year values.'
-        };
-    }
-
-    return { valid: true, message: '' };
-}
 </script>
 
 <%- include('modules/bottom') %>

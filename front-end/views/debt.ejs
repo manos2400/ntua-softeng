@@ -50,19 +50,21 @@ body{
 					</div>
 				</div>
 			</div>
-			<input
-				class="input is-info"
-				style="max-width: 15em;"
-				type="text"
-				placeholder="Start date (YYYYMMDD)"
-				value = "20220101"
+			<label for="startDate">Start Date:</label>
+            <input
+                id="startDate"
+                class="input is-info"
+                style="max-width: 15em;"
+                type="date"
+                value="2022-01-01"
 			/>
-			<input
-				class="input is-info"
-				style="max-width: 15em;"
-				type="text"
-				placeholder="End date (YYYYMMDD)"
-				value = "20230101"
+			<label for="endDate">End Date:</label>
+            <input
+                id="endDate"
+                class="input is-info"
+                style="max-width: 15em;"
+                type="date"
+                value="2023-01-01"
 			/>
 		</p>
 		<p>
@@ -117,23 +119,19 @@ function getAllDebt() {
 
 	// get list of ops
 
-	// check if date input exists
-    const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
-    const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
+	// Validate the dates
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
 
-    // Validating Date
-    const startValidation = isValidDate(startDate);
-    const endValidation = isValidDate(endDate);
-
-    if (!startValidation.valid) {
-        msg(responseElDebtPage, 'error', startValidation.message);
+	if (!startDate || !endDate) {
+        msg(responseEl, 'error', 'Please provide both start and end dates.');
         return;
     }
 
-    if (!endValidation.valid) {
-        msg(responseElDebtPage, 'error', endValidation.message);
-        return;
-    }
+	// Convert dates to the required format
+    const formattedStartDate = startDate.replace(/-/g, '');
+    const formattedEndDate = endDate.replace(/-/g, '');
+
 
     let opid = document.querySelector('#op-select').getAttribute('value');
     opid = opid.match(/\(([^)]+)\)/);
@@ -148,7 +146,7 @@ function getAllDebt() {
         return;
     }
 
-    apiRequest('getDebt/' + opid + '/' + startDate + '/' + endDate + '?format=json')
+    apiRequest('getDebt/' + opid + '/' + formattedStartDate + '/' + formattedEndDate + '?format=json')
         .then(data => {
             let html = `
                 <table class="table"><thead></thead>
@@ -198,36 +196,7 @@ function payDebt(thisEl, from, to, start, end){
 
 
 
-function isValidDate(date) {
-    const dateRegex = /^\d{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
 
-    // Validating the date format
-    if (!dateRegex.test(date)) {
-        return {
-            valid: false,
-            message: 'Date must be in YYYYMMDD format with valid year, month, and day.'
-        };
-    }
-
-    //Validate if it's a real date
-    const year = parseInt(date.substring(0, 4), 10);
-    const month = parseInt(date.substring(4, 6), 10) - 1; 
-    const day = parseInt(date.substring(6, 8), 10);
-
-    const dt = new Date(year, month, day);
-    if (
-        dt.getFullYear() !== year ||
-        dt.getMonth() !== month ||
-        dt.getDate() !== day
-    ) {
-        return {
-            valid: false,
-            message: 'Invalid date. Please check the day, month, and year values.'
-        };
-    }
-
-    return { valid: true, message: '' };
-}
 
 </script>
 

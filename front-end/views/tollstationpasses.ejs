@@ -36,19 +36,21 @@
 			</div>
 		</p>
 		<p>
-			<input
-				class="input is-info"
-				style="max-width: 20em;"
-				type="text"
-				placeholder="Start date (YYYYMMDD)"
-				value = "20220101"
+			<label for="startDate">Start Date:</label>
+            <input
+                id="startDate"
+                class="input is-info"
+                style="max-width: 15em;"
+                type="date"
+                value="2022-01-01"
 			/>
-			<input
-				class="input is-info"
-				style="max-width: 20em;"
-				type="text"
-				placeholder="End date (YYYYMMDD)"
-				value = "20230101"
+			<label for="endDate">End Date:</label>
+            <input
+                id="endDate"
+                class="input is-info"
+                style="max-width: 15em;"
+                type="date"
+                value="2023-01-01"
 			/>
 		</p>
 		<p>
@@ -102,29 +104,26 @@ function getPasses(){
 	stationId = stationId.replace(')', '');
 	console.log('id',stationId);
 
-	const startDate = document.querySelector('input[placeholder="Start date (YYYYMMDD)"]').value;
-	const endDate = document.querySelector('input[placeholder="End date (YYYYMMDD)"]').value;
+	// Validate the dates
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
 
-	//Date Valition
-	const startValidation = isValidDate(startDate);
-	const endValidation = isValidDate(endDate);
-	
-	if (!startValidation.valid) {
-        msg(responseEl, 'error', startValidation.message);
+	if (!startDate || !endDate) {
+        msg(responseEl, 'error', 'Please provide both start and end dates.');
         return;
     }
 
-    if (!endValidation.valid) {
-        msg(responseEl, 'error', endValidation.message);
-        return;
-    }
+	// Convert dates to the required format
+    const formattedStartDate = startDate.replace(/-/g, '');
+    const formattedEndDate = endDate.replace(/-/g, '');
+
 
 	if (!stationId || !startDate || !endDate) {
 		msg(responseEl, 'error', 'Please enter all fields');
 		return;
 	}
 
-	apiRequest(`tollstationpasses/${stationId}/${startDate}/${endDate}`, 'GET')
+	apiRequest(`tollstationpasses/${stationId}/${formattedStartDate}/${formattedEndDate}`, 'GET')
 		.then(data => {
 			msg(responseEl, 'success', data)
 			msg(responseEl, 'success', JSON.stringify(data.passList, null, 2));
@@ -164,36 +163,7 @@ function getPasses(){
 
 }
 
-function isValidDate(date) {
-    const dateRegex = /^\d{4}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
 
-    // Validating the date format
-    if (!dateRegex.test(date)) {
-        return {
-            valid: false,
-            message: 'Date must be in YYYYMMDD format with valid year, month, and day.'
-        };
-    }
-
-    //Validate if it's a real date
-    const year = parseInt(date.substring(0, 4), 10);
-    const month = parseInt(date.substring(4, 6), 10) - 1; 
-    const day = parseInt(date.substring(6, 8), 10);
-
-    const dt = new Date(year, month, day);
-    if (
-        dt.getFullYear() !== year ||
-        dt.getMonth() !== month ||
-        dt.getDate() !== day
-    ) {
-        return {
-            valid: false,
-            message: 'Invalid date. Please check the day, month, and year values.'
-        };
-    }
-
-    return { valid: true, message: '' };
-}
 
 </script>
 
