@@ -181,9 +181,10 @@ test_get_debt "curl -s -X GET $API_URL/getDebt/AA/202401/202301?format=json -H $
 test_get_debt "curl -s -X GET $API_URL/getDebt/AA/202401/202301?format=csv -H $AUTH_HEADER_GOOD" $VERBOSE "Get Debt [CSV, wrong toll operator]"
 
 # ======================= Pay Debt ======================= #
-test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20220101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, good token]"
-test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20220101?format=json -H $AUTH_HEADER_BAD" $VERBOSE "Pay Debt [JSON, bad token]"
-test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20220101?format=json" $VERBOSE "Pay Debt [JSON, no token]"
+test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20220101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, zero debt]"
+test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20230101?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, good token]"
+test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20230101?format=json -H $AUTH_HEADER_BAD" $VERBOSE "Pay Debt [JSON, bad token]"
+test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/20220101/20230101?format=json" $VERBOSE "Pay Debt [JSON, no token]"
 test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/202401/2023?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, bad dates]"
 test_pay_debt "curl -s -X PUT $API_URL/payDebt/AM/AM/1/1?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, bad dates]"
 test_pay_debt "curl -s -X PUT $API_URL/payDebt/AA/AM/202401/202301?format=json -H $AUTH_HEADER_GOOD" $VERBOSE "Pay Debt [JSON, wrong toll operator]"

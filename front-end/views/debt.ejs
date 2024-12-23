@@ -180,8 +180,11 @@ function payDebt(thisEl, from, to, start, end){
 
 	const fromOp = from;
 	const toOp = to;
-	const startDate = start;
-	const endDate = end;
+	let startDate = start;
+	let endDate = end;
+
+	startDate = startDate.replace(/-/g, '');
+    endDate = endDate.replace(/-/g, '');
 
 	apiRequest('payDebt/' + fromOp + '/' + toOp + '/' + startDate + '/' + endDate + '?format=json', 'PUT')
 		.then(data => {
