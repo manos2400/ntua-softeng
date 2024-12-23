@@ -188,7 +188,7 @@ function payDebt(thisEl, from, to, start, end){
 			msg(thisEl.parentElement, 'success', 'Paid')
 		})
 		.catch(error => {
-			msg(responseEl, 'error', error)
+			msg(responseElDebtPage, 'error', error)
 		}
 	);
 
