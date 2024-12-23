@@ -80,12 +80,16 @@ export const resetPasses = async (req: Request, res: Response) => {
         await Pass.delete({});
         await Tag.delete({});
 
-        // create admin user
-        const admin = new User();
-        admin.username = 'admin';
-        admin.password = await bcrypt.hash('freepasses4all', 12);
-        admin.isAdmin = true;
-        await admin.save();
+        // check if admin exists
+        let admin = await User.findOneBy({ username: 'admin' });
+
+        if(!admin) {
+            admin = new User();
+            admin.username = 'admin';
+            admin.password = await bcrypt.hash('freepasses4all', 12);
+            admin.isAdmin = true;
+            await admin.save();
+        }
 
         res.status(200).json({ status: 'OK' });
     } catch (error) {

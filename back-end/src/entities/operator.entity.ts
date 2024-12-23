@@ -1,8 +1,7 @@
-import {BaseEntity, Column, Entity, OneToMany, OneToOne, PrimaryColumn} from "typeorm";
+import {BaseEntity, Column, Entity, OneToMany, PrimaryColumn} from "typeorm";
 
 import { Station } from "./station.entity";
 import {Tag} from "./tag.entity";
-import {User} from "./user.entity";
 
 @Entity()
 export class Operator extends BaseEntity {
@@ -23,7 +22,4 @@ export class Operator extends BaseEntity {
 
     @OneToMany(() => Tag, tag => tag.operator)
     tags: Tag[];
-
-    @OneToOne(() => User, user => user.operator)
-    user: User;
 }

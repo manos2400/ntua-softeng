@@ -354,6 +354,11 @@ export const getTollStats = async (req: Request, res: Response) => {
             relations: ['tag', 'station', 'tag.operator', 'station.operator'],
         });
 
+        if (!passes) {
+            res.status(400).json({ error: 'No passes found in that time period' });
+            return;
+        }
+
         const stations = Object.values(passes.reduce((acc, pass) => {
             const stationID = pass.station.id;
             if (!acc[stationID]) {

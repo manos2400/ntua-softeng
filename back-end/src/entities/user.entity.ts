@@ -1,13 +1,14 @@
-import {BaseEntity, Column, Entity, OneToOne} from "typeorm";
+import {BaseEntity, Column, Entity} from "typeorm";
 import { PrimaryGeneratedColumn } from "typeorm";
-import {Operator} from "./operator.entity";
 
 @Entity()
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({
+        unique: true
+    })
     username: string;
 
     @Column()
@@ -15,7 +16,4 @@ export class User extends BaseEntity {
 
     @Column()
     isAdmin: boolean;
-
-    @OneToOne(() => Operator, operator => operator.user)
-    operator: Operator;
 }
