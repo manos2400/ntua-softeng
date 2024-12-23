@@ -1,0 +1,9 @@
+services:
+  proxy:
+    image: nginx:alpine
+    container_name: proxy
+    restart: always
+    network_mode: host
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../ssl:/etc/nginx/ssl
