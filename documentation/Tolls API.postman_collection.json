@@ -1,0 +1,3072 @@
+{
+	"info": {
+		"_postman_id": "a4527869-d901-4408-a494-13353222e723",
+		"name": "Tolls API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26437177",
+		"_collection_link": "https://lively-desert-223159.postman.co/workspace/Team-Workspace~0431c260-6a09-46bf-8ed0-9999faad8319/collection/26437177-a4527869-d901-4408-a494-13353222e723?action=share&source=collection_link&creator=26437177"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "admin",
+					"item": [
+						{
+							"name": "healthcheck",
+							"item": [
+								{
+									"name": "Health Check Endpoint",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/healthcheck",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"healthcheck"
+											]
+										},
+										"description": "Returns the health status of the system, including database connection and entity counts."
+									},
+									"response": [
+										{
+											"name": "Health check status returned successfully.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/healthcheck",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"healthcheck"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"dbconnection\": \"<string>\",\n  \"n_stations\": \"<integer>\",\n  \"n_tags\": \"<integer>\",\n  \"n_passes\": \"<integer>\"\n}"
+										},
+										{
+											"name": "Health check failed.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/healthcheck",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"healthcheck"
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"dbconnection\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "resetstations",
+							"item": [
+								{
+									"name": "Reset Stations",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/resetstations",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"resetstations"
+											]
+										},
+										"description": "Resets the stations by reloading data from a CSV file."
+									},
+									"response": [
+										{
+											"name": "Stations reset successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/resetstations",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"resetstations"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Error resetting stations.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/resetstations",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"resetstations"
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"info\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "resetpasses",
+							"item": [
+								{
+									"name": "Reset Passes",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/resetpasses",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"resetpasses"
+											]
+										},
+										"description": "Deletes all passes and tags, and creates an admin user."
+									},
+									"response": [
+										{
+											"name": "Passes reset successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/resetpasses",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"resetpasses"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Error resetting passes.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/resetpasses",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"resetpasses"
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"info\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "addpasses",
+							"item": [
+								{
+									"name": "Add Passes",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "X-observatory-auth",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "multipart/form-data"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "file",
+													"value": "<string>",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/addpasses",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"addpasses"
+											]
+										},
+										"description": "Adds new passes to the system from the provided data."
+									},
+									"response": [
+										{
+											"name": "Passes added successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "multipart/form-data"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "formdata",
+													"formdata": [
+														{
+															"key": "file",
+															"value": "<string>",
+															"type": "text"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/addpasses",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"addpasses"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Invalid request body.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "multipart/form-data"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "formdata",
+													"formdata": [
+														{
+															"key": "file",
+															"value": "<string>",
+															"type": "text"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/addpasses",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"addpasses"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"info\": \"<string>\"\n}"
+										},
+										{
+											"name": "Error adding passes.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "multipart/form-data"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "formdata",
+													"formdata": [
+														{
+															"key": "file",
+															"value": "<string>",
+															"type": "text"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/addpasses",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"addpasses"
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"info\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "users",
+							"item": [
+								{
+									"name": "Get Users",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "X-observatory-auth",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"users"
+											]
+										},
+										"description": "Retrieves a list of all users."
+									},
+									"response": [
+										{
+											"name": "Users retrieved successfully.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/users",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"users"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  \"<string>\",\n  \"<string>\"\n]"
+										},
+										{
+											"name": "Error retrieving users.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/users",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"users"
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"info\": \"<string>\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Modify User",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "X-observatory-auth",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"users"
+											]
+										},
+										"description": "Creates or updates a user with the provided username and password."
+									},
+									"response": [
+										{
+											"name": "User modified successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/users",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"users"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\"\n}"
+										},
+										{
+											"name": "Invalid request body.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/users",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"users"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"<string>\"\n}"
+										},
+										{
+											"name": "Error modifying user.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-observatory-auth",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/admin/users",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"admin",
+														"users"
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"status\": \"<string>\",\n  \"info\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "tollStationPasses",
+					"item": [
+						{
+							"name": "{tollStationID}",
+							"item": [
+								{
+									"name": "{date_from}",
+									"item": [
+										{
+											"name": "{date_to}",
+											"item": [
+												{
+													"name": "Get Toll Station Passes",
+													"request": {
+														"auth": {
+															"type": "apikey",
+															"apikey": [
+																{
+																	"key": "key",
+																	"value": "X-observatory-auth",
+																	"type": "string"
+																},
+																{
+																	"key": "value",
+																	"value": "{{apiKey}}",
+																	"type": "string"
+																},
+																{
+																	"key": "in",
+																	"value": "header",
+																	"type": "string"
+																}
+															]
+														},
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/tollStationPasses/:tollStationID/:date_from/:date_to?format=csv",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"tollStationPasses",
+																":tollStationID",
+																":date_from",
+																":date_to"
+															],
+															"query": [
+																{
+																	"key": "format",
+																	"value": "csv",
+																	"description": "Response format, either JSON or CSV."
+																}
+															],
+															"variable": [
+																{
+																	"key": "tollStationID",
+																	"value": "<string>",
+																	"description": "(Required) ID of the toll station."
+																},
+																{
+																	"key": "date_from",
+																	"value": "<string>",
+																	"description": "(Required) Start date in YYYYMMDD format."
+																},
+																{
+																	"key": "date_to",
+																	"value": "<string>",
+																	"description": "(Required) End date in YYYYMMDD format."
+																}
+															]
+														},
+														"description": "Retrieves passes for a specific toll station within a given time period."
+													},
+													"response": [
+														{
+															"name": "Passes retrieved successfully.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/tollStationPasses/:tollStationID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"tollStationPasses",
+																		":tollStationID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollStationID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"stationID\": \"<string>\",\n  \"stationOperator\": \"<string>\",\n  \"requestTimestamp\": \"<string>\",\n  \"periodFrom\": \"<string>\",\n  \"periodTo\": \"<string>\",\n  \"n_passes\": \"<integer>\",\n  \"passList\": [\n    {\n      \"passIndex\": \"<integer>\",\n      \"passID\": \"<string>\",\n      \"timestamp\": \"<string>\",\n      \"tagID\": \"<string>\",\n      \"tagProvider\": \"<string>\",\n      \"passType\": \"<string>\",\n      \"passCharge\": \"<number>\"\n    },\n    {\n      \"passIndex\": \"<integer>\",\n      \"passID\": \"<string>\",\n      \"timestamp\": \"<string>\",\n      \"tagID\": \"<string>\",\n      \"tagProvider\": \"<string>\",\n      \"passType\": \"<string>\",\n      \"passCharge\": \"<number>\"\n    }\n  ]\n}"
+														},
+														{
+															"name": "No toll station found for the provided ID.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/tollStationPasses/:tollStationID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"tollStationPasses",
+																		":tollStationID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollStationID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"error\": \"<string>\"\n}"
+														},
+														{
+															"name": "Error retrieving passes.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/tollStationPasses/:tollStationID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"tollStationPasses",
+																		":tollStationID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollStationID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "passAnalysis",
+					"item": [
+						{
+							"name": "{stationOpID}",
+							"item": [
+								{
+									"name": "{tagOpID}",
+									"item": [
+										{
+											"name": "{date_from}",
+											"item": [
+												{
+													"name": "{date_to}",
+													"item": [
+														{
+															"name": "Get Pass Analysis",
+															"request": {
+																"auth": {
+																	"type": "apikey",
+																	"apikey": [
+																		{
+																			"key": "key",
+																			"value": "X-observatory-auth",
+																			"type": "string"
+																		},
+																		{
+																			"key": "value",
+																			"value": "{{apiKey}}",
+																			"type": "string"
+																		},
+																		{
+																			"key": "in",
+																			"value": "header",
+																			"type": "string"
+																		}
+																	]
+																},
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/passAnalysis/:stationOpID/:tagOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"passAnalysis",
+																		":stationOpID",
+																		":tagOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "stationOpID",
+																			"value": "<string>",
+																			"description": "(Required) ID of the station operator."
+																		},
+																		{
+																			"key": "tagOpID",
+																			"value": "<string>",
+																			"description": "(Required) ID of the tag operator."
+																		},
+																		{
+																			"key": "date_from",
+																			"value": "<string>",
+																			"description": "(Required) Start date in YYYYMMDD format."
+																		},
+																		{
+																			"key": "date_to",
+																			"value": "<string>",
+																			"description": "(Required) End date in YYYYMMDD format."
+																		}
+																	]
+																},
+																"description": "Provides an analysis of passes based on station and tag operator within a specified period."
+															},
+															"response": [
+																{
+																	"name": "Analysis retrieved successfully.",
+																	"originalRequest": {
+																		"method": "GET",
+																		"header": [
+																			{
+																				"key": "Accept",
+																				"value": "application/json"
+																			},
+																			{
+																				"key": "X-observatory-auth",
+																				"value": "<API Key>",
+																				"description": "Added as a part of security scheme: apikey"
+																			}
+																		],
+																		"url": {
+																			"raw": "{{baseUrl}}/api/passAnalysis/:stationOpID/:tagOpID/:date_from/:date_to?format=csv",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"passAnalysis",
+																				":stationOpID",
+																				":tagOpID",
+																				":date_from",
+																				":date_to"
+																			],
+																			"query": [
+																				{
+																					"key": "format",
+																					"value": "csv",
+																					"description": "Response format, either JSON or CSV."
+																				}
+																			],
+																			"variable": [
+																				{
+																					"key": "stationOpID"
+																				},
+																				{
+																					"key": "tagOpID"
+																				},
+																				{
+																					"key": "date_from"
+																				},
+																				{
+																					"key": "date_to"
+																				}
+																			]
+																		}
+																	},
+																	"status": "OK",
+																	"code": 200,
+																	"_postman_previewlanguage": "json",
+																	"header": [
+																		{
+																			"key": "Content-Type",
+																			"value": "application/json"
+																		}
+																	],
+																	"cookie": [],
+																	"body": "{\n  \"stationOpID\": \"<string>\",\n  \"tagOpID\": \"<string>\",\n  \"requestTimestamp\": \"<string>\",\n  \"periodFrom\": \"<string>\",\n  \"periodTo\": \"<string>\",\n  \"n_passes\": \"<integer>\",\n  \"passList\": [\n    {\n      \"passIndex\": \"<integer>\",\n      \"passID\": \"<string>\",\n      \"stationID\": \"<string>\",\n      \"timestamp\": \"<string>\",\n      \"tagID\": \"<string>\",\n      \"passCharge\": \"<number>\"\n    },\n    {\n      \"passIndex\": \"<integer>\",\n      \"passID\": \"<string>\",\n      \"stationID\": \"<string>\",\n      \"timestamp\": \"<string>\",\n      \"tagID\": \"<string>\",\n      \"passCharge\": \"<number>\"\n    }\n  ]\n}"
+																},
+																{
+																	"name": "At least one of the operator IDs given where invalid.",
+																	"originalRequest": {
+																		"method": "GET",
+																		"header": [
+																			{
+																				"key": "Accept",
+																				"value": "application/json"
+																			},
+																			{
+																				"key": "X-observatory-auth",
+																				"value": "<API Key>",
+																				"description": "Added as a part of security scheme: apikey"
+																			}
+																		],
+																		"url": {
+																			"raw": "{{baseUrl}}/api/passAnalysis/:stationOpID/:tagOpID/:date_from/:date_to?format=csv",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"passAnalysis",
+																				":stationOpID",
+																				":tagOpID",
+																				":date_from",
+																				":date_to"
+																			],
+																			"query": [
+																				{
+																					"key": "format",
+																					"value": "csv",
+																					"description": "Response format, either JSON or CSV."
+																				}
+																			],
+																			"variable": [
+																				{
+																					"key": "stationOpID"
+																				},
+																				{
+																					"key": "tagOpID"
+																				},
+																				{
+																					"key": "date_from"
+																				},
+																				{
+																					"key": "date_to"
+																				}
+																			]
+																		}
+																	},
+																	"status": "Bad Request",
+																	"code": 400,
+																	"_postman_previewlanguage": "json",
+																	"header": [
+																		{
+																			"key": "Content-Type",
+																			"value": "application/json"
+																		}
+																	],
+																	"cookie": [],
+																	"body": "{\n  \"error\": \"<string>\"\n}"
+																},
+																{
+																	"name": "Error performing analysis.",
+																	"originalRequest": {
+																		"method": "GET",
+																		"header": [
+																			{
+																				"key": "X-observatory-auth",
+																				"value": "<API Key>",
+																				"description": "Added as a part of security scheme: apikey"
+																			}
+																		],
+																		"url": {
+																			"raw": "{{baseUrl}}/api/passAnalysis/:stationOpID/:tagOpID/:date_from/:date_to?format=csv",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"passAnalysis",
+																				":stationOpID",
+																				":tagOpID",
+																				":date_from",
+																				":date_to"
+																			],
+																			"query": [
+																				{
+																					"key": "format",
+																					"value": "csv",
+																					"description": "Response format, either JSON or CSV."
+																				}
+																			],
+																			"variable": [
+																				{
+																					"key": "stationOpID"
+																				},
+																				{
+																					"key": "tagOpID"
+																				},
+																				{
+																					"key": "date_from"
+																				},
+																				{
+																					"key": "date_to"
+																				}
+																			]
+																		}
+																	},
+																	"status": "Internal Server Error",
+																	"code": 500,
+																	"_postman_previewlanguage": "text",
+																	"header": [],
+																	"cookie": [],
+																	"body": ""
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "passesCost",
+					"item": [
+						{
+							"name": "{tollOpID}",
+							"item": [
+								{
+									"name": "{tagOpID}",
+									"item": [
+										{
+											"name": "{date_from}",
+											"item": [
+												{
+													"name": "{date_to}",
+													"item": [
+														{
+															"name": "Get Passes Cost",
+															"request": {
+																"auth": {
+																	"type": "apikey",
+																	"apikey": [
+																		{
+																			"key": "key",
+																			"value": "X-observatory-auth",
+																			"type": "string"
+																		},
+																		{
+																			"key": "value",
+																			"value": "{{apiKey}}",
+																			"type": "string"
+																		},
+																		{
+																			"key": "in",
+																			"value": "header",
+																			"type": "string"
+																		}
+																	]
+																},
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/passesCost/:tollOpID/:tagOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"passesCost",
+																		":tollOpID",
+																		":tagOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollOpID",
+																			"value": "<string>",
+																			"description": "(Required) ID of the toll operator."
+																		},
+																		{
+																			"key": "tagOpID",
+																			"value": "<string>",
+																			"description": "(Required) ID of the tag operator."
+																		},
+																		{
+																			"key": "date_from",
+																			"value": "<string>",
+																			"description": "(Required) Start date in YYYYMMDD format."
+																		},
+																		{
+																			"key": "date_to",
+																			"value": "<string>",
+																			"description": "(Required) End date in YYYYMMDD format."
+																		}
+																	]
+																},
+																"description": "Retrieves the total cost of passes between specific operators within a period."
+															},
+															"response": [
+																{
+																	"name": "Cost retrieved successfully.",
+																	"originalRequest": {
+																		"method": "GET",
+																		"header": [
+																			{
+																				"key": "Accept",
+																				"value": "application/json"
+																			},
+																			{
+																				"key": "X-observatory-auth",
+																				"value": "<API Key>",
+																				"description": "Added as a part of security scheme: apikey"
+																			}
+																		],
+																		"url": {
+																			"raw": "{{baseUrl}}/api/passesCost/:tollOpID/:tagOpID/:date_from/:date_to?format=csv",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"passesCost",
+																				":tollOpID",
+																				":tagOpID",
+																				":date_from",
+																				":date_to"
+																			],
+																			"query": [
+																				{
+																					"key": "format",
+																					"value": "csv",
+																					"description": "Response format, either JSON or CSV."
+																				}
+																			],
+																			"variable": [
+																				{
+																					"key": "tollOpID"
+																				},
+																				{
+																					"key": "tagOpID"
+																				},
+																				{
+																					"key": "date_from"
+																				},
+																				{
+																					"key": "date_to"
+																				}
+																			]
+																		}
+																	},
+																	"status": "OK",
+																	"code": 200,
+																	"_postman_previewlanguage": "json",
+																	"header": [
+																		{
+																			"key": "Content-Type",
+																			"value": "application/json"
+																		}
+																	],
+																	"cookie": [],
+																	"body": "{\n  \"tollOpID\": \"<string>\",\n  \"tagOpID\": \"<string>\",\n  \"requestTimestamp\": \"<string>\",\n  \"periodFrom\": \"<string>\",\n  \"periodTo\": \"<string>\",\n  \"n_passes\": \"<integer>\",\n  \"passesCost\": \"<number>\"\n}"
+																},
+																{
+																	"name": "Error retrieving cost.",
+																	"originalRequest": {
+																		"method": "GET",
+																		"header": [
+																			{
+																				"key": "X-observatory-auth",
+																				"value": "<API Key>",
+																				"description": "Added as a part of security scheme: apikey"
+																			}
+																		],
+																		"url": {
+																			"raw": "{{baseUrl}}/api/passesCost/:tollOpID/:tagOpID/:date_from/:date_to?format=csv",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"passesCost",
+																				":tollOpID",
+																				":tagOpID",
+																				":date_from",
+																				":date_to"
+																			],
+																			"query": [
+																				{
+																					"key": "format",
+																					"value": "csv",
+																					"description": "Response format, either JSON or CSV."
+																				}
+																			],
+																			"variable": [
+																				{
+																					"key": "tollOpID"
+																				},
+																				{
+																					"key": "tagOpID"
+																				},
+																				{
+																					"key": "date_from"
+																				},
+																				{
+																					"key": "date_to"
+																				}
+																			]
+																		}
+																	},
+																	"status": "Internal Server Error",
+																	"code": 500,
+																	"_postman_previewlanguage": "text",
+																	"header": [],
+																	"cookie": [],
+																	"body": ""
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "chargesBy",
+					"item": [
+						{
+							"name": "{tollOpID}",
+							"item": [
+								{
+									"name": "{date_from}",
+									"item": [
+										{
+											"name": "{date_to}",
+											"item": [
+												{
+													"name": "Get Charges By Operator",
+													"request": {
+														"auth": {
+															"type": "apikey",
+															"apikey": [
+																{
+																	"key": "key",
+																	"value": "X-observatory-auth",
+																	"type": "string"
+																},
+																{
+																	"key": "value",
+																	"value": "{{apiKey}}",
+																	"type": "string"
+																},
+																{
+																	"key": "in",
+																	"value": "header",
+																	"type": "string"
+																}
+															]
+														},
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/chargesBy/:tollOpID/:date_from/:date_to?format=csv",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"chargesBy",
+																":tollOpID",
+																":date_from",
+																":date_to"
+															],
+															"query": [
+																{
+																	"key": "format",
+																	"value": "csv",
+																	"description": "Response format, either JSON or CSV."
+																}
+															],
+															"variable": [
+																{
+																	"key": "tollOpID",
+																	"value": "<string>",
+																	"description": "(Required) ID of the toll operator."
+																},
+																{
+																	"key": "date_from",
+																	"value": "<string>",
+																	"description": "(Required) Start date in YYYYMMDD format."
+																},
+																{
+																	"key": "date_to",
+																	"value": "<string>",
+																	"description": "(Required) End date in YYYYMMDD format."
+																}
+															]
+														},
+														"description": "Retrieves charges grouped by visiting operators within a specified period."
+													},
+													"response": [
+														{
+															"name": "Charges retrieved successfully.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/chargesBy/:tollOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"chargesBy",
+																		":tollOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollOpID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"tollOpID\": \"<string>\",\n  \"requestTimestamp\": \"<string>\",\n  \"periodFrom\": \"<string>\",\n  \"periodTo\": \"<string>\",\n  \"vOpList\": [\n    {\n      \"visitingOpID\": \"<string>\",\n      \"nPasses\": \"<integer>\",\n      \"passesCost\": \"<number>\"\n    },\n    {\n      \"visitingOpID\": \"<string>\",\n      \"nPasses\": \"<integer>\",\n      \"passesCost\": \"<number>\"\n    }\n  ]\n}"
+														},
+														{
+															"name": "Error retrieving charges.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/chargesBy/:tollOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"chargesBy",
+																		":tollOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollOpID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "getDebt",
+					"item": [
+						{
+							"name": "{tagOpID}",
+							"item": [
+								{
+									"name": "{date_from}",
+									"item": [
+										{
+											"name": "{date_to}",
+											"item": [
+												{
+													"name": "Get Debt of an Operator",
+													"request": {
+														"auth": {
+															"type": "apikey",
+															"apikey": [
+																{
+																	"key": "key",
+																	"value": "X-observatory-auth",
+																	"type": "string"
+																},
+																{
+																	"key": "value",
+																	"value": "{{apiKey}}",
+																	"type": "string"
+																},
+																{
+																	"key": "in",
+																	"value": "header",
+																	"type": "string"
+																}
+															]
+														},
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/getDebt/:tagOpID/:date_from/:date_to?format=csv",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"getDebt",
+																":tagOpID",
+																":date_from",
+																":date_to"
+															],
+															"query": [
+																{
+																	"key": "format",
+																	"value": "csv",
+																	"description": "Response format, either JSON or CSV."
+																}
+															],
+															"variable": [
+																{
+																	"key": "tagOpID",
+																	"value": "<string>",
+																	"description": "(Required) ID of the tags operator."
+																},
+																{
+																	"key": "date_from",
+																	"value": "<string>",
+																	"description": "(Required) Start date in YYYYMMDD format."
+																},
+																{
+																	"key": "date_to",
+																	"value": "<string>",
+																	"description": "(Required) End date in YYYYMMDD format."
+																}
+															]
+														},
+														"description": "Retrieves the total debt of a tag operator within a specified period to all toll operators."
+													},
+													"response": [
+														{
+															"name": "Debt retrieved successfully.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/getDebt/:tagOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"getDebt",
+																		":tagOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tagOpID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"tagOpID\": \"<string>\",\n  \"requestTimestamp\": \"<string>\",\n  \"periodFrom\": \"<string>\",\n  \"periodTo\": \"<string>\",\n  \"hOpList\": [\n    {\n      \"homeOpID\": \"<string>\",\n      \"nPasses\": \"<integer>\",\n      \"passesCost\": \"<number>\"\n    },\n    {\n      \"homeOpID\": \"<string>\",\n      \"nPasses\": \"<integer>\",\n      \"passesCost\": \"<number>\"\n    }\n  ]\n}"
+														},
+														{
+															"name": "Error retrieving debt.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/getDebt/:tagOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"getDebt",
+																		":tagOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tagOpID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "payDebt",
+					"item": [
+						{
+							"name": "{tagOpID}",
+							"item": [
+								{
+									"name": "{tollOpID}",
+									"item": [
+										{
+											"name": "{date_from}",
+											"item": [
+												{
+													"name": "{date_to}",
+													"item": [
+														{
+															"name": "Pay Debt",
+															"request": {
+																"auth": {
+																	"type": "apikey",
+																	"apikey": [
+																		{
+																			"key": "key",
+																			"value": "X-observatory-auth",
+																			"type": "string"
+																		},
+																		{
+																			"key": "value",
+																			"value": "{{apiKey}}",
+																			"type": "string"
+																		},
+																		{
+																			"key": "in",
+																			"value": "header",
+																			"type": "string"
+																		}
+																	]
+																},
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/payDebt/:tagOpID/:tollOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"payDebt",
+																		":tagOpID",
+																		":tollOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tagOpID",
+																			"value": "<string>",
+																			"description": "(Required) ID of the tag operator."
+																		},
+																		{
+																			"key": "tollOpID",
+																			"value": "<string>",
+																			"description": "(Required) ID of the toll operator."
+																		},
+																		{
+																			"key": "date_from",
+																			"value": "<string>",
+																			"description": "(Required) Start date in YYYYMMDD format."
+																		},
+																		{
+																			"key": "date_to",
+																			"value": "<string>",
+																			"description": "(Required) End date in YYYYMMDD format."
+																		}
+																	]
+																},
+																"description": "Pays the debt of a tag operator to a toll operator within a specified period."
+															},
+															"response": [
+																{
+																	"name": "Debt paid successfully.",
+																	"originalRequest": {
+																		"method": "PUT",
+																		"header": [
+																			{
+																				"key": "Accept",
+																				"value": "application/json"
+																			},
+																			{
+																				"key": "X-observatory-auth",
+																				"value": "<API Key>",
+																				"description": "Added as a part of security scheme: apikey"
+																			}
+																		],
+																		"url": {
+																			"raw": "{{baseUrl}}/api/payDebt/:tagOpID/:tollOpID/:date_from/:date_to?format=csv",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"payDebt",
+																				":tagOpID",
+																				":tollOpID",
+																				":date_from",
+																				":date_to"
+																			],
+																			"query": [
+																				{
+																					"key": "format",
+																					"value": "csv",
+																					"description": "Response format, either JSON or CSV."
+																				}
+																			],
+																			"variable": [
+																				{
+																					"key": "tagOpID"
+																				},
+																				{
+																					"key": "tollOpID"
+																				},
+																				{
+																					"key": "date_from"
+																				},
+																				{
+																					"key": "date_to"
+																				}
+																			]
+																		}
+																	},
+																	"status": "OK",
+																	"code": 200,
+																	"_postman_previewlanguage": "json",
+																	"header": [
+																		{
+																			"key": "Content-Type",
+																			"value": "application/json"
+																		}
+																	],
+																	"cookie": [],
+																	"body": "{\n  \"status\": \"<string>\",\n  \"totalCost\": \"<number>\"\n}"
+																},
+																{
+																	"name": "Error paying debt.",
+																	"originalRequest": {
+																		"method": "PUT",
+																		"header": [
+																			{
+																				"key": "X-observatory-auth",
+																				"value": "<API Key>",
+																				"description": "Added as a part of security scheme: apikey"
+																			}
+																		],
+																		"url": {
+																			"raw": "{{baseUrl}}/api/payDebt/:tagOpID/:tollOpID/:date_from/:date_to?format=csv",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"payDebt",
+																				":tagOpID",
+																				":tollOpID",
+																				":date_from",
+																				":date_to"
+																			],
+																			"query": [
+																				{
+																					"key": "format",
+																					"value": "csv",
+																					"description": "Response format, either JSON or CSV."
+																				}
+																			],
+																			"variable": [
+																				{
+																					"key": "tagOpID"
+																				},
+																				{
+																					"key": "tollOpID"
+																				},
+																				{
+																					"key": "date_from"
+																				},
+																				{
+																					"key": "date_to"
+																				}
+																			]
+																		}
+																	},
+																	"status": "Internal Server Error",
+																	"code": 500,
+																	"_postman_previewlanguage": "text",
+																	"header": [],
+																	"cookie": [],
+																	"body": ""
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "tollStats",
+					"item": [
+						{
+							"name": "{tollOpID}",
+							"item": [
+								{
+									"name": "{date_from}",
+									"item": [
+										{
+											"name": "{date_to}",
+											"item": [
+												{
+													"name": "Get Toll Station Stats",
+													"request": {
+														"auth": {
+															"type": "apikey",
+															"apikey": [
+																{
+																	"key": "key",
+																	"value": "X-observatory-auth",
+																	"type": "string"
+																},
+																{
+																	"key": "value",
+																	"value": "{{apiKey}}",
+																	"type": "string"
+																},
+																{
+																	"key": "in",
+																	"value": "header",
+																	"type": "string"
+																}
+															]
+														},
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/tollStats/:tollOpID/:date_from/:date_to?format=csv",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"tollStats",
+																":tollOpID",
+																":date_from",
+																":date_to"
+															],
+															"query": [
+																{
+																	"key": "format",
+																	"value": "csv",
+																	"description": "Response format, either JSON or CSV."
+																}
+															],
+															"variable": [
+																{
+																	"key": "tollOpID",
+																	"value": "<string>",
+																	"description": "(Required) ID of the toll operator."
+																},
+																{
+																	"key": "date_from",
+																	"value": "<string>",
+																	"description": "(Required) Start date in YYYYMMDD format."
+																},
+																{
+																	"key": "date_to",
+																	"value": "<string>",
+																	"description": "(Required) End date in YYYYMMDD format."
+																}
+															]
+														},
+														"description": "Retrieves statistics for a specific toll operator within a given time period."
+													},
+													"response": [
+														{
+															"name": "Stats retrieved successfully.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/tollStats/:tollOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"tollStats",
+																		":tollOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollOpID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"tollOpID\": \"<string>\",\n  \"requestTimestamp\": \"<string>\",\n  \"periodFrom\": \"<string>\",\n  \"periodTo\": \"<string>\",\n  \"stats\": {\n    \"totalPasses\": \"<integer>\",\n    \"totalRevenue\": \"<string>\",\n    \"mostPasses\": \"<string>\",\n    \"mostRevenue\": \"<string>\",\n    \"mostPassesWithHomeTag\": \"<string>\",\n    \"mostRevenueWithHomeTag\": \"<string>\"\n  }\n}"
+														},
+														{
+															"name": "No toll operator found for the provided ID.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/tollStats/:tollOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"tollStats",
+																		":tollOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollOpID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"error\": \"<string>\"\n}"
+														},
+														{
+															"name": "Error retrieving stats.",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "X-observatory-auth",
+																		"value": "<API Key>",
+																		"description": "Added as a part of security scheme: apikey"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/tollStats/:tollOpID/:date_from/:date_to?format=csv",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"tollStats",
+																		":tollOpID",
+																		":date_from",
+																		":date_to"
+																	],
+																	"query": [
+																		{
+																			"key": "format",
+																			"value": "csv",
+																			"description": "Response format, either JSON or CSV."
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "tollOpID"
+																		},
+																		{
+																			"key": "date_from"
+																		},
+																		{
+																			"key": "date_to"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "login",
+					"item": [
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								},
+								"description": "Logs in a user with the provided username and password."
+							},
+							"response": [
+								{
+									"name": "User logged in successfully.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"login"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"token\": \"<string>\"\n}"
+								},
+								{
+									"name": "Invalid request body.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"login"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "Invalid username or password.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"login"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"message\": \"<string>\"\n}"
+								},
+								{
+									"name": "Error logging in.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"<string>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"login"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "logout",
+					"item": [
+						{
+							"name": "Logout",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "X-observatory-auth",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/logout",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"logout"
+									]
+								},
+								"description": "Logs out the currently logged in user."
+							},
+							"response": [
+								{
+									"name": "User logged out successfully.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "X-observatory-auth",
+												"value": "<API Key>",
+												"description": "Added as a part of security scheme: apikey"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/logout",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"logout"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "stations",
+					"item": [
+						{
+							"name": "Get Stations",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "X-observatory-auth",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/stations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"stations"
+									]
+								},
+								"description": "Retrieves a list of all toll stations."
+							},
+							"response": [
+								{
+									"name": "Stations retrieved successfully.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "X-observatory-auth",
+												"value": "<API Key>",
+												"description": "Added as a part of security scheme: apikey"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/stations",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"stations"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"stations\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"name": "Error retrieving stations.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "X-observatory-auth",
+												"value": "<API Key>",
+												"description": "Added as a part of security scheme: apikey"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/stations",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"stations"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "operators",
+					"item": [
+						{
+							"name": "Get Operators",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "X-observatory-auth",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/operators",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"operators"
+									]
+								},
+								"description": "Retrieves a list of all toll operators."
+							},
+							"response": [
+								{
+									"name": "Operators retrieved successfully.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "X-observatory-auth",
+												"value": "<API Key>",
+												"description": "Added as a part of security scheme: apikey"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/operators",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"operators"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"operators\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"name": "Error retrieving operators.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "X-observatory-auth",
+												"value": "<API Key>",
+												"description": "Added as a part of security scheme: apikey"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/operators",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"operators"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:9115"
+		}
+	]
+}
