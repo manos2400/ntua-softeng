@@ -123,6 +123,45 @@ program
         await callApi(`/chargesBy/${opid}/${from}/${to}?format=${format}`, 'GET', null, true);
     });
 
+// Get Debt
+program
+    .command('getdebt')
+    .description('Get Debt of an Operator')
+    .requiredOption('--opid <operator id>', 'Operator ID')
+    .requiredOption('--from <from>', 'Start date (YYYYMMDD)')
+    .requiredOption('--to <to>', 'End date (YYYYMMDD)')
+    .option('--format <format>', 'Output format (csv or json)', 'json')
+    .action(async (options) => {
+        const { from, to, format, opid } = options;
+        await callApi(`/getDebt/${opid}/${from}/${to}?format=${format}`, 'GET', null, true);
+    });
+
+// Pay Debt
+program
+    .command('paydebt')
+    .description('Pays the debt of a tag operator to a toll operator within a specified period.')
+    .requiredOption('--tagopid <operator id>', 'Tag Operator ID')
+    .requiredOption('--tollopid <operator id>', 'Toll Operator ID')
+    .requiredOption('--from <from>', 'Start date (YYYYMMDD)')
+    .requiredOption('--to <to>', 'End date (YYYYMMDD)')
+    .action(async (options) => {
+        const { tagopid, tollopid, from, to } = options;
+        await callApi(`/payDebt/${tagopid}/${tollopid}/${from}/${to}`, 'PUT', null, true);
+    });
+
+// Get Toll Stats
+program
+    .command('tollstats')
+    .description('Get statistics for a toll operator')
+    .requiredOption('--opid <operator id>', 'Operator ID')
+    .requiredOption('--from <from>', 'Start date (YYYYMMDD)')
+    .requiredOption('--to <to>', 'End date (YYYYMMDD)')
+    .option('--format <format>', 'Output format (csv or json)', 'json')
+    .action(async (options) => {
+        const { from, to, format, opid } = options;
+        await callApi(`/tollStats/${opid}/${from}/${to}?format=${format}`, 'GET', null, true);
+    });
+
 // Passes Cost
 program
     .command('passescost')

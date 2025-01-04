@@ -350,11 +350,6 @@ export const payDebt = async (req: Request, res: Response) => {
         return;
     }
 
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
-        return;
-    }
-
     try {
         const tollOp = await Operator.findOneBy({ id: tollOpID });
         const tagOp = await Operator.findOneBy({ id: tagOpID });

@@ -922,7 +922,7 @@ paths:
           description: Error paying debt.
   /api/tollStats/{tollOpID}/{date_from}/{date_to}:
     get:
-      summary: Get Toll Station Stats
+      summary: Get Toll Operator Statistics
       description: >-
         Retrieves statistics for a specific toll operator within a given time
         period.
