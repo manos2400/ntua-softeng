@@ -1,7 +1,12 @@
 # CLI client
 
-Ενδεικτικά περιεχόμενα:
+Make sure you have commander installed:
+```bash
+cd cli-client
+npm install commander
+```
 
-- Command line interface (CLI).
-- CLI functional tests.
-- CLI unit tests.
+You can use the CLI like this:
+```bash
+./cli.js healthcheck # example
+```
