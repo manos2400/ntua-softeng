@@ -66,29 +66,29 @@
 
 function initStations(){
 
-const responseEl = document.getElementById('feed-get-stations');
-const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
+	const responseEl = document.getElementById('feed-get-stations');
+	const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
 
-//msg(responseEl, 'loading...');
+	//msg(responseEl, 'loading...');
 
-apiRequest('stations')
-	.then(data => {
-		responseEl.innerHTML="";
-		for(const i of data.stations){
-			op = document.createElement('a');
-			op.href = "#";
-			op.className = "dropdown-item";
-			op.innerHTML = i.name + " (" + i.id + ")";
-			opsSelect.appendChild(op);
+	apiRequest('stations')
+		.then(data => {
+			responseEl.innerHTML="";
+			for(const i of data.stations){
+				op = document.createElement('a');
+				op.href = "#";
+				op.className = "dropdown-item";
+				op.innerHTML = i.name + " (" + i.id + ")";
+				opsSelect.appendChild(op);
+			}
+			applyDropdownFunctionality(document.getElementById('op-select'));
+			applyDropdownTriggers(document.getElementById('op-select'));
+		})
+		.catch(error => {
+			console.log(error);
+			msg(responseEl, 'error', error)
 		}
-		applyDropdownFunctionality(document.getElementById('op-select'));
-		applyDropdownTriggers(document.getElementById('op-select'));
-	})
-	.catch(error => {
-		console.log(error);
-		msg(responseEl, 'error', error)
-	}
-);
+	);
 }
 
 initStations();
@@ -125,6 +125,12 @@ function getPasses(){
 
 	apiRequest(`tollstationpasses/${stationId}/${formattedStartDate}/${formattedEndDate}`, 'GET')
 		.then(data => {
+
+			if(data.error){
+				msg(responseEl, 'warn', data.error);
+				return;
+			}
+
 			msg(responseEl, 'success', data)
 			msg(responseEl, 'success', JSON.stringify(data.passList, null, 2));
 
@@ -140,7 +146,7 @@ function getPasses(){
 						<tr>
 							<td>${obj.passIndex}</td>
 							<td>${obj.passID}</td>
-							<td>${obj.timestamp}</td>
+							<td>${formatTimestamp(obj.timestamp)}</td>
 							<td>${obj.tagID}</td>
 							<td>${obj.tagProvider}</td>
 							<td>${obj.passType}</td>

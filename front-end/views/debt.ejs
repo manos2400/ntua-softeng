@@ -148,6 +148,12 @@ function getAllDebt() {
 
     apiRequest('getDebt/' + opid + '/' + formattedStartDate + '/' + formattedEndDate + '?format=json')
         .then(data => {
+
+			if(data.error){
+				msg(responseElDebtPage, 'info', 'No debt found');
+				return;
+			}
+
             let html = `
                 <table class="table"><thead></thead>
                 <tbody>

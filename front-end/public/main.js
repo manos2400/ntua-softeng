@@ -25,6 +25,10 @@ async function apiRequest(url, method = 'GET', data = null, output_format = 'jso
 
     const response = await fetch(`${API_BASE}/${url}`, options);
 
+    if(response.status == 204) {
+        return {'error': 'No data'};
+    }
+
     if(output_format == 'json'){
         if (!response.ok) {
             const error = await response.json();
@@ -81,6 +85,7 @@ function msg(container,type,txt=""){
     article.classList.add('message');
     if(type=="error") article.classList.add('is-danger');
     if(type=="success") article.classList.add('is-success');
+    if(type=="warn") article.classList.add('is-warning');
     const div = document.createElement('div');
     div.classList.add('message-body');
     div.innerHTML = txt;
@@ -88,4 +93,14 @@ function msg(container,type,txt=""){
     container.style.padding = '5px 5px 20px 5px';
     container.innerHTML = '';
     container.appendChild(article);
+}
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+}
+
+function getNumber(str){
+    // from string ABC34 or AB17 keep 34 and 17
+    return str.match(/\d+/)[0];
 }

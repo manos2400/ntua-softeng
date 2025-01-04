@@ -189,54 +189,14 @@ function getCharges(){
 
 			let final_data_list = {};
 			
-			if(format == 'json'){
-				msg(responseEl, 'success', JSON.stringify(data, null, 2));
-				printResult(data);
-			} else {
-				msg(responseEl, 'converting...');
-			
-				data.text().then(csvText => {
-					// Convert CSV text to object list
-					const list = csvText.split('\n').map(row => row.split(','));
-					
-					// Process CSV to desired output
-					let dataTXT = list.map(row => row.join(',')).join('\n');
-					msg(responseEl, 'success', dataTXT);
-
-					// convert csv to json manually (without lib) like the json above
-					let headers = list[1];
-					let data = list.slice(1);
-					let final_data_list = {
-						tollOpID: headers[0],
-						requestTimestamp: headers[1],
-						periodFrom: headers[2],
-						periodTo: headers[3],
-						vOpList: []
-					}
-					for (let i = 0; i < data.length; i++) {
-						let row = data[i];
-						let obj = {
-							visitingOpID: row[4],
-							nPasses: parseInt(row[5]),
-							passesCost: row[6]
-						}
-						final_data_list.vOpList.push(obj);
-					}
-
-					msg(responseEl, 'success', JSON.stringify(final_data_list, null, 2));
-
-					// remove last empty row
-					final_data_list.vOpList.pop();
-
-					printResult(final_data_list);
-
-				}).catch(error => {
-					msg(responseEl, 'error', 'Error parsing CSV data: ' + error);
-				});
-
-				
-				
+			if(data.error){
+				msg(responseEl, 'warn', data.error);
+				return;
 			}
+
+			msg(responseEl, 'success', JSON.stringify(data, null, 2));
+			printResult(data);
+
 		})
 		.catch(error => {
 			msg(responseEl, 'error', error)

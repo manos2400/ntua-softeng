@@ -9,6 +9,7 @@
 <main>
     <div class="content">
         <div id="feed-get-ops"></div>
+		<div id="feed-get-stations"></div>
         <h1>Statistics</h1>
 
         <p>
@@ -50,7 +51,7 @@
             />
         </p>
         <p>
-            <button class="button is-info is-dark" onclick="getStats()">Get Statistics</button>
+            <button class="button is-info is-dark" id="getBtn" onclick="getStats()">Get Statistics</button>
         </p>
 
         <div id="feed-getstats"></div>
@@ -58,6 +59,37 @@
 </main>
 
 <script>
+
+
+const matchedStations = {};
+const getBtn = document.getElementById('getBtn');
+
+function matchStations(){
+
+	const responseEl = document.getElementById('feed-get-stations');
+
+	getBtn.disabled = true;
+	//msg(responseEl, 'info', 'loading...');
+
+	apiRequest('stations')
+		.then(data => {
+			responseEl.innerHTML="";
+			for(const i of data.stations){
+				matchedStations[i.id] = i.name;
+			}
+			getBtn.disabled = false;
+		})
+		.catch(error => {
+			console.log(error);
+			msg(responseEl, 'error', error)
+		}
+	);
+}
+matchStations();
+
+
+
+
 function initOps() {
     const responseEl = document.getElementById('feed-get-ops');
     const opsSelect = document.getElementById('op-select').querySelector('.dropdown-content');
@@ -115,6 +147,12 @@ function getStats() {
     const apiCall = `tollStats/${tollOp}/${formattedStartDate}/${formattedEndDate}?format=${format}`;
     apiRequest(apiCall, 'GET', null, format)
         .then(data => {
+
+            if(data.error){
+				msg(responseEl, 'warn', data.error);
+				return;
+			}
+
             if (format === 'json') {
                 msg(responseEl, 'success', JSON.stringify(data.stats, null, 2));
                 const stats = data.stats;
@@ -123,10 +161,10 @@ function getStats() {
                     <tbody>
                         <tr><th>Total Passes</th><td>${stats.totalPasses}</td></tr>
                         <tr><th>Total Revenue</th><td>${stats.totalRevenue}</td></tr>
-                        <tr><th>Station with Most Passes</th><td>${stats.mostPasses}</td></tr>
-                        <tr><th>Station with Most Revenue</th><td>${stats.mostRevenue}</td></tr>
-                        <tr><th>Station with Most Passes (Home Tag)</th><td>${stats.mostPassesWithHomeTag}</td></tr>
-                        <tr><th>Station with Most Revenue (Home Tag)</th><td>${stats.mostRevenueWithHomeTag}</td></tr>
+                        <tr><th>Station with Most Passes</th><td>${matchedStations[stats.mostPasses]} (${stats.mostPasses})</td></tr>
+                        <tr><th>Station with Most Revenue</th><td>${matchedStations[stats.mostRevenue]} (${stats.mostRevenue})</td></tr>
+                        <tr><th>Station with Most Passes (Home Tag)</th><td>${matchedStations[stats.mostPassesWithHomeTag]} (${stats.mostPassesWithHomeTag})</td></tr>
+                        <tr><th>Station with Most Revenue (Home Tag)</th><td>${matchedStations[stats.mostRevenueWithHomeTag]} (${stats.mostRevenueWithHomeTag})</td></tr>
                     </tbody>
                 `;
                 responseEl.innerHTML = html;

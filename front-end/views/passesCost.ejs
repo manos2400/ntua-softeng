@@ -183,6 +183,12 @@ function getCost(){
 	let final_data_list = {};
 
 		if(format == 'json'){
+
+			if(data.error){
+				msg(responseEl, 'warn', data.error);
+				return;
+			}
+			
 			msg(responseEl, 'success', JSON.stringify(data, null, 2));
 			let html = `
 					<table class="table"><thead></thead>
@@ -193,35 +199,7 @@ function getCost(){
 				`;
 
 				responseEl.innerHTML = html;
-		} else {
-			msg(responseEl, 'converting...');
-
-			data.text().then(csvText => {
-				// Convert CSV text to object list
-				const list = csvText.split('\n').map(row => row.split(','));
-				
-				// Process CSV to desired output
-				let dataTXT = list.map(row => row.join(',')).join('\n');
-				msg(responseEl, 'success', dataTXT);
-
-				let data = list[1];
-				// last two values:
-				const n_passes = data[5];
-				const passesCost = data[6];
-				
-				responseEl.innerHTML = `
-					<table class="table"><thead></thead>
-					<tbody>
-						<tr><th>Number of passes</th><td>${n_passes}</td></tr>
-						<tr><th>Total passes cost</th><td>${parseFloat(passesCost).toFixed(2)}</td></tr> 
-					</tbody>
-				`;
-
-	}).catch(error => {
-		msg(responseEl, 'error', 'Error parsing CSV data: ' + error);
-	});
-
-}
+		}
 })
 		.catch(error => {
 			msg(responseEl, 'error', error)

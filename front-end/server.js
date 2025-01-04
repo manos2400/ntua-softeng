@@ -20,7 +20,7 @@ async function checkToken() {
 
 app.get('/', async (req, res) => {
     if (await checkToken()) {
-        res.render('dashboard', { title: 'Dashboard Page' });
+        res.render('debt', { title: 'Dashboard Page' });
     } else {
         res.render('landing', { title: 'Landing Page' });
     }
