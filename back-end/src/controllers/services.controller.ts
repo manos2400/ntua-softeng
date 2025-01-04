@@ -3,25 +3,20 @@ import {Pass} from '../entities/pass.entity';
 import {Station} from '../entities/station.entity';
 import {Operator} from '../entities/operator.entity';
 import {Between, Not} from 'typeorm';
+import {createCsv, formatDate, handleError} from '../utils/helper-functions';
 
-const formatDate = (date: string) => `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
-
-const createCsv = (header: string, data: string[]) => {
-    return [header, ...data, ''].join('\n');
-}
-
-const handleError = (res: Response, error: any, message: string) => {
-    console.error(message, error);
-    res.status(500).json({ error: message });
-};
 
 export const getTollStationPasses = async (req: Request, res: Response) => {
     const { tollStationID, date_from, date_to } = req.params;
-    const periodFrom = formatDate(date_from);
-    const periodTo = formatDate(date_to);
-
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
+    let periodFrom, periodTo;
+    try {
+        periodFrom = formatDate(date_from);
+        periodTo = formatDate(date_to);
+        if(new Date(periodFrom) > new Date(periodTo)) {
+            throw new Error('Invalid date range');
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
         return;
     }
 
@@ -73,11 +68,15 @@ export const getTollStationPasses = async (req: Request, res: Response) => {
 
 export const getPassAnalysis = async (req: Request, res: Response) => {
     const { stationOpID, tagOpID, date_from, date_to } = req.params;
-    const periodFrom = formatDate(date_from);
-    const periodTo = formatDate(date_to);
-
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
+    let periodFrom, periodTo;
+    try {
+        periodFrom = formatDate(date_from);
+        periodTo = formatDate(date_to);
+        if(new Date(periodFrom) > new Date(periodTo)) {
+            throw new Error('Invalid date range');
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
         return;
     }
 
@@ -136,11 +135,15 @@ export const getPassAnalysis = async (req: Request, res: Response) => {
 
 export const getChargesBy = async (req: Request, res: Response) => {
     const { tollOpID, date_from, date_to } = req.params;
-    const periodFrom = formatDate(date_from);
-    const periodTo = formatDate(date_to);
-
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
+    let periodFrom, periodTo;
+    try {
+        periodFrom = formatDate(date_from);
+        periodTo = formatDate(date_to);
+        if(new Date(periodFrom) > new Date(periodTo)) {
+            throw new Error('Invalid date range');
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
         return;
     }
 
@@ -212,11 +215,15 @@ export const getChargesBy = async (req: Request, res: Response) => {
 
 export const getPassesCost = async (req: Request, res: Response) => {
     const { tollOpID, tagOpID, date_from, date_to } = req.params;
-    const periodFrom = formatDate(date_from);
-    const periodTo = formatDate(date_to);
-
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
+    let periodFrom, periodTo;
+    try {
+        periodFrom = formatDate(date_from);
+        periodTo = formatDate(date_to);
+        if(new Date(periodFrom) > new Date(periodTo)) {
+            throw new Error('Invalid date range');
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
         return;
     }
 
@@ -266,11 +273,15 @@ export const getPassesCost = async (req: Request, res: Response) => {
 
 export const getDebt = async (req: Request, res: Response) => {
     const { tagOpID, date_from, date_to } = req.params;
-    const periodFrom = formatDate(date_from);
-    const periodTo = formatDate(date_to);
-
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
+    let periodFrom, periodTo;
+    try {
+        periodFrom = formatDate(date_from);
+        periodTo = formatDate(date_to);
+        if(new Date(periodFrom) > new Date(periodTo)) {
+            throw new Error('Invalid date range');
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
         return;
     }
 
@@ -342,11 +353,15 @@ export const getDebt = async (req: Request, res: Response) => {
 
 export const payDebt = async (req: Request, res: Response) => {
     const { tagOpID, tollOpID, date_from, date_to } = req.params;
-    const periodFrom = formatDate(date_from);
-    const periodTo = formatDate(date_to);
-
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
+    let periodFrom, periodTo;
+    try {
+        periodFrom = formatDate(date_from);
+        periodTo = formatDate(date_to);
+        if(new Date(periodFrom) > new Date(periodTo)) {
+            throw new Error('Invalid date range');
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
         return;
     }
 
@@ -383,11 +398,15 @@ export const payDebt = async (req: Request, res: Response) => {
 
 export const getTollStats = async (req: Request, res: Response) => {
     const { tollOpID, date_from, date_to } = req.params;
-    const periodFrom = formatDate(date_from);
-    const periodTo = formatDate(date_to);
-
-    if(new Date(periodFrom) > new Date(periodTo)) {
-        res.status(400).json({ error: 'Invalid date range' });
+    let periodFrom, periodTo;
+    try {
+        periodFrom = formatDate(date_from);
+        periodTo = formatDate(date_to);
+        if(new Date(periodFrom) > new Date(periodTo)) {
+            throw new Error('Invalid date range');
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
         return;
     }
 
