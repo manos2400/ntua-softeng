@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Tolls API
-  version: 0.1.0
+  version: 0.1.1
 servers:
   - url: http://localhost:9115
     description: Local server
@@ -9,7 +9,9 @@ paths:
   /api/admin/healthcheck:
     get:
       summary: Health Check Endpoint
-      description: Returns the health status of the system, including database connection and entity counts.
+      description: >-
+        Returns the health status of the system, including database connection
+        and entity counts.
       tags:
         - Admin
       responses:
@@ -126,7 +128,7 @@ paths:
       summary: Add Passes
       description: Adds new passes to the system from the provided data.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Admin
       requestBody:
@@ -166,6 +168,28 @@ paths:
                     type: string
                     description: Error information.
                     example: No file uploaded.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Forbidden reason
+                    example: 'Forbidden: You do not have the required permissions'
         '500':
           description: Error adding passes.
           content:
@@ -186,7 +210,7 @@ paths:
       summary: Get Users
       description: Retrieves a list of all users.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Admin
       responses:
@@ -200,6 +224,30 @@ paths:
                   type: string
                   description: Username of a user.
                   example: admin
+        '204':
+          description: No users found.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Forbidden reason
+                    example: 'Forbidden: You do not have the required permissions'
         '500':
           description: Error retrieving users.
           content:
@@ -215,12 +263,11 @@ paths:
                     type: string
                     description: Error information.
                     example: Error retrieving users.
-
     post:
       summary: Modify User
       description: Creates or updates a user with the provided username and password.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Admin
       requestBody:
@@ -261,6 +308,28 @@ paths:
                     type: string
                     description: Error message.
                     example: Username and password are required.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Forbidden reason
+                    example: 'Forbidden: You do not have the required permissions'
         '500':
           description: Error modifying user.
           content:
@@ -276,13 +345,12 @@ paths:
                     type: string
                     description: Error information.
                     example: Error modifying user.
-
   /api/tollStationPasses/{tollStationID}/{date_from}/{date_to}:
     get:
       summary: Get Toll Station Passes
       description: Retrieves passes for a specific toll station within a given time period.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Services
       parameters:
@@ -309,7 +377,9 @@ paths:
           description: Response format, either JSON or CSV.
           schema:
             type: string
-            enum: [ json, csv ]
+            enum:
+              - json
+              - csv
       responses:
         '200':
           description: Passes retrieved successfully.
@@ -326,7 +396,7 @@ paths:
                     example: aegeanmotorway
                   requestTimestamp:
                     type: string
-                    example: 2021-05-01T12:00:00Z
+                    example: '2021-05-01T12:00:00Z'
                   periodFrom:
                     type: string
                     example: 2021-05-01 00:00
@@ -349,7 +419,7 @@ paths:
                           example: 3030
                         timestamp:
                           type: string
-                          example: 2021-05-01T12:00:00Z
+                          example: '2021-05-01T12:00:00Z'
                         tagID:
                           type: string
                           example: NAOP0J43D5
@@ -365,7 +435,10 @@ paths:
             text/csv:
               schema:
                 type: string
-                example: stationID,stationOperator,requestTimestamp,periodFrom,periodTo,n_passes,passID,timestamp,tagID,tagProvider,passType,passCharge
+                example: >-
+                  stationID,stationOperator,requestTimestamp,periodFrom,periodTo,n_passes,passID,timestamp,tagID,tagProvider,passType,passCharge
+        '204':
+          description: No passes found.
         '400':
           description: No toll station found for the provided ID.
           content:
@@ -377,14 +450,27 @@ paths:
                     type: string
                     description: Error message.
                     example: Toll station not found.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error retrieving passes.
   /api/passAnalysis/{stationOpID}/{tagOpID}/{date_from}/{date_to}:
     get:
       summary: Get Pass Analysis
-      description: Provides an analysis of passes based on station and tag operator within a specified period.
+      description: >-
+        Provides an analysis of passes based on station and tag operator within
+        a specified period.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Services
       parameters:
@@ -417,7 +503,9 @@ paths:
           description: Response format, either JSON or CSV.
           schema:
             type: string
-            enum: [ json, csv ]
+            enum:
+              - json
+              - csv
       responses:
         '200':
           description: Analysis retrieved successfully.
@@ -434,7 +522,7 @@ paths:
                     example: EG
                   requestTimestamp:
                     type: string
-                    example: 2021-05-01T12:00:00Z
+                    example: '2021-05-01T12:00:00Z'
                   periodFrom:
                     type: string
                     example: 2021-05-01 00:00
@@ -460,7 +548,7 @@ paths:
                           example: AM01
                         timestamp:
                           type: string
-                          example: 2021-05-01T12:00:00Z
+                          example: '2021-05-01T12:00:00Z'
                         tagID:
                           type: string
                           example: NAOP0J43D5
@@ -470,7 +558,10 @@ paths:
             text/csv:
               schema:
                 type: string
-                example: stationOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passID,stationID,timestamp,tagID,passCharge
+                example: >-
+                  stationOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passID,stationID,timestamp,tagID,passCharge
+        '204':
+          description: No passes found.
         '400':
           description: At least one of the operator IDs given where invalid.
           content:
@@ -482,14 +573,27 @@ paths:
                     type: string
                     description: Error message.
                     example: Station or tag operator not found.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error performing analysis.
   /api/passesCost/{tollOpID}/{tagOpID}/{date_from}/{date_to}:
     get:
       summary: Get Passes Cost
-      description: Retrieves the total cost of passes between specific operators within a period.
+      description: >-
+        Retrieves the total cost of passes between specific operators within a
+        period.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Services
       parameters:
@@ -522,7 +626,9 @@ paths:
           description: Response format, either JSON or CSV.
           schema:
             type: string
-            enum: [ json, csv ]
+            enum:
+              - json
+              - csv
       responses:
         '200':
           description: Cost retrieved successfully.
@@ -531,39 +637,53 @@ paths:
               schema:
                 type: object
                 properties:
-                    tollOpID:
-                        type: string
-                        example: AM
-                    tagOpID:
-                        type: string
-                        example: EG
-                    requestTimestamp:
-                        type: string
-                        example: 2021-05-01T12:00:00Z
-                    periodFrom:
-                        type: string
-                        example: 2021-05-01 00:00
-                    periodTo:
-                        type: string
-                        example: 2021-06-01 23:59
-                    n_passes:
-                        type: integer
-                        example: 150
-                    passesCost:
-                        type: number
-                        example: 300
+                  tollOpID:
+                    type: string
+                    example: AM
+                  tagOpID:
+                    type: string
+                    example: EG
+                  requestTimestamp:
+                    type: string
+                    example: '2021-05-01T12:00:00Z'
+                  periodFrom:
+                    type: string
+                    example: 2021-05-01 00:00
+                  periodTo:
+                    type: string
+                    example: 2021-06-01 23:59
+                  n_passes:
+                    type: integer
+                    example: 150
+                  passesCost:
+                    type: number
+                    example: 300
             text/csv:
               schema:
                 type: string
-                example: tollOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passesCost
+                example: >-
+                  tollOpID,tagOpID,requestTimestamp,periodFrom,periodTo,n_passes,passesCost
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error retrieving cost.
   /api/chargesBy/{tollOpID}/{date_from}/{date_to}:
     get:
       summary: Get Charges By Operator
-      description: Retrieves charges grouped by visiting operators within a specified period.
+      description: >-
+        Retrieves charges grouped by visiting operators within a specified
+        period.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Services
       parameters:
@@ -590,7 +710,9 @@ paths:
           description: Response format, either JSON or CSV.
           schema:
             type: string
-            enum: [ json, csv ]
+            enum:
+              - json
+              - csv
       responses:
         '200':
           description: Charges retrieved successfully.
@@ -599,44 +721,60 @@ paths:
               schema:
                 type: object
                 properties:
-                    tollOpID:
-                        type: string
-                        example: AM
-                    requestTimestamp:
-                        type: string
-                        example: 2021-05-01T12:00:00Z
-                    periodFrom:
-                        type: string
-                        example: 2021-05-01 00:00
-                    periodTo:
-                        type: string
-                        example: 2021-06-01 23:59
-                    vOpList:
-                        type: array
-                        items:
-                            type: object
-                            properties:
-                                visitingOpID:
-                                    type: string
-                                    example: EG
-                                nPasses:
-                                    type: integer
-                                    example: 150
-                                passesCost:
-                                    type: number
-                                    example: 300
+                  tollOpID:
+                    type: string
+                    example: AM
+                  requestTimestamp:
+                    type: string
+                    example: '2021-05-01T12:00:00Z'
+                  periodFrom:
+                    type: string
+                    example: 2021-05-01 00:00
+                  periodTo:
+                    type: string
+                    example: 2021-06-01 23:59
+                  vOpList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        visitingOpID:
+                          type: string
+                          example: EG
+                        nPasses:
+                          type: integer
+                          example: 150
+                        passesCost:
+                          type: number
+                          example: 300
             text/csv:
               schema:
                 type: string
-                example: tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,nPasses,passesCost
+                example: >-
+                  tollOpID,requestTimestamp,periodFrom,periodTo,visitingOpID,nPasses,passesCost
+        '204':
+          description: No visiting operators found.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error retrieving charges.
   /api/getDebt/{tagOpID}/{date_from}/{date_to}:
     get:
       summary: Get Debt of an Operator
-      description: Retrieves the total debt of a tag operator within a specified period to all toll operators.
+      description: >-
+        Retrieves the total debt of a tag operator within a specified period to
+        all toll operators.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Services
       parameters:
@@ -663,7 +801,9 @@ paths:
           description: Response format, either JSON or CSV.
           schema:
             type: string
-            enum: [ json, csv ]
+            enum:
+              - json
+              - csv
       responses:
         '200':
           description: Debt retrieved successfully.
@@ -677,7 +817,7 @@ paths:
                     example: AM
                   requestTimestamp:
                     type: string
-                    example: 2021-05-01T12:00:00Z
+                    example: '2021-05-01T12:00:00Z'
                   periodFrom:
                     type: string
                     example: 2021-05-01 00:00
@@ -701,15 +841,31 @@ paths:
             text/csv:
               schema:
                 type: string
-                example: tagOpID,requestTimestamp,periodFrom,periodTo,homeOpID,nPasses,passesCost
+                example: >-
+                  tagOpID,requestTimestamp,periodFrom,periodTo,homeOpID,nPasses,passesCost
+        '204':
+          description: No debts found.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error retrieving debt.
   /api/payDebt/{tagOpID}/{tollOpID}/{date_from}/{date_to}:
     put:
       summary: Pay Debt
-      description: Pays the debt of a tag operator to a toll operator within a specified period.
+      description: >-
+        Pays the debt of a tag operator to a toll operator within a specified
+        period.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Services
       parameters:
@@ -742,7 +898,9 @@ paths:
           description: Response format, either JSON or CSV.
           schema:
             type: string
-            enum: [ json, csv ]
+            enum:
+              - json
+              - csv
       responses:
         '200':
           description: Debt paid successfully.
@@ -757,14 +915,27 @@ paths:
                   totalCost:
                     type: number
                     example: 300
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error paying debt.
   /api/tollStats/{tollOpID}/{date_from}/{date_to}:
     get:
       summary: Get Toll Station Stats
-      description: Retrieves statistics for a specific toll operator within a given time period.
+      description: >-
+        Retrieves statistics for a specific toll operator within a given time
+        period.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Services
       parameters:
@@ -791,7 +962,9 @@ paths:
           description: Response format, either JSON or CSV.
           schema:
             type: string
-            enum: [ json, csv ]
+            enum:
+              - json
+              - csv
       responses:
         '200':
           description: Stats retrieved successfully.
@@ -805,7 +978,7 @@ paths:
                     example: AM
                   requestTimestamp:
                     type: string
-                    example: 2021-05-01T12:00:00Z
+                    example: '2021-05-01T12:00:00Z'
                   periodFrom:
                     type: string
                     example: 2021-05-01 00:00
@@ -815,28 +988,31 @@ paths:
                   stats:
                     type: object
                     properties:
-                        totalPasses:
-                          type: integer
-                          example: 33
-                        totalRevenue:
-                          type: string
-                          example: 25.50
-                        mostPasses:
-                          type: string
-                          example: AM01
-                        mostRevenue:
-                          type: string
-                          example: AM03
-                        mostPassesWithHomeTag:
-                          type: string
-                          example: AM02
-                        mostRevenueWithHomeTag:
-                          type: string
-                          example: AM03
+                      totalPasses:
+                        type: integer
+                        example: 33
+                      totalRevenue:
+                        type: string
+                        example: 25.5
+                      mostPasses:
+                        type: string
+                        example: AM01
+                      mostRevenue:
+                        type: string
+                        example: AM03
+                      mostPassesWithHomeTag:
+                        type: string
+                        example: AM02
+                      mostRevenueWithHomeTag:
+                        type: string
+                        example: AM03
             text/csv:
               schema:
                 type: string
-                example: tollOpID,requestTimestamp,periodFrom,periodTo,totalPasses,totalRevenue,mostPasses,mostRevenue,mostPassesWithHomeTag,mostRevenueWithHomeTag
+                example: >-
+                  tollOpID,requestTimestamp,periodFrom,periodTo,totalPasses,totalRevenue,mostPasses,mostRevenue,mostPassesWithHomeTag,mostRevenueWithHomeTag
+        '204':
+          description: No content found.
         '400':
           description: No toll operator found for the provided ID.
           content:
@@ -848,9 +1024,19 @@ paths:
                     type: string
                     description: Error message.
                     example: Toll operator not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error retrieving stats.
-
   /api/login:
     post:
       summary: Login
@@ -883,7 +1069,8 @@ paths:
                   token:
                     type: string
                     description: JWT token for the user.
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5ld3VzZXIifQ.1Jf8
+                    example: >-
+                      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5ld3VzZXIifQ.1Jf8
         '400':
           description: Invalid request body.
           content:
@@ -896,18 +1083,18 @@ paths:
                     description: Error message.
                     example: Username and password are required.
         '401':
-            description: Invalid username or password.
-            content:
-              application/json:
-                schema:
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                        description: Error message.
-                        example: Invalid username or password.
+          description: 'Uanauthorized: Invalid username or password.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message.
+                    example: Invalid username or password.
         '500':
-            description: Error logging in.
+          description: Error logging in.
   /api/logout:
     post:
       summary: Logout
@@ -915,47 +1102,58 @@ paths:
       tags:
         - Authentication
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       responses:
         '200':
           description: User logged out successfully.
-
   /api/stations:
     get:
-        summary: Get Stations
-        description: Retrieves a list of all toll stations.
-        security:
-            - ObservatoryAuth: [ ]
-        tags:
-            - Utilities
-        responses:
-            '200':
-              description: Stations retrieved successfully.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                        stations:
-                          type: array
-                          items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: AM01
-                                name:
-                                  type: string
-                                  example: Σταθμός Διοδίων Κλειδίου Μετωπικά (Προς Αθήνα)
-            '500':
-              description: Error retrieving stations.
-
+      summary: Get Stations
+      description: Retrieves a list of all toll stations.
+      security:
+        - ObservatoryAuth: []
+      tags:
+        - Utilities
+      responses:
+        '200':
+          description: Stations retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: AM01
+                        name:
+                          type: string
+                          example: Σταθμός Διοδίων Κλειδίου Μετωπικά (Προς Αθήνα)
+        '204':
+          description: No stations found.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
+        '500':
+          description: Error retrieving stations.
   /api/operators:
     get:
       summary: Get Operators
       description: Retrieves a list of all toll operators.
       security:
-        - ObservatoryAuth: [ ]
+        - ObservatoryAuth: []
       tags:
         - Utilities
       responses:
@@ -977,6 +1175,19 @@ paths:
                         name:
                           type: string
                           example: aegeanmotorway
+        '204':
+          description: No operators found.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Unauthorized reason
+                    example: 'Unauthorized: No token provided'
         '500':
           description: Error retrieving operators.
 components:

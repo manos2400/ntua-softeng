@@ -162,6 +162,11 @@ export const getUsers = async (req: Request, res: Response) => {
     try {
         const users = await User.find();
 
+        if(users.length === 0) {
+            res.status(204).send();
+            return;
+        }
+
         const usernames = users.map(user => user.username);
 
         res.status(200).json(usernames);
