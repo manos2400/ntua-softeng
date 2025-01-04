@@ -1,27 +1,39 @@
 # Testing
 
-First enter the testing directory (must do this because of relative paths in the scripts):
+## Initialize
+
+Launch the back-end and the database:
+```bash
+cd tmp-help-files # contains compose.yaml
+docker compose up -d # start DB
+
+cd ../back-end
+pnpm install
+pnpm run dev
+```
+
+After back-end launches and successfully connects to the database, initialize the daatabse by adding the first (admin) user. In a new terminal:
+```bash
+curl -X POST http://localhost:9115/api/admin/resetpasses
+```
+
+If you want to test the CLI, make sure you have commander installed:
+```bash
+cd cli-client
+npm install commander
+```
+
+## Test
 ```
 cd testing
 ```
 
-To test the backend use:
-```
-./test api
-
-# or use -v for more details
-./test -v api
+API Functional Tests:
+```bash
+./test.sh api
 ```
 
-To test the CLI:
-```
-./test cli
-
-# or use -v for more details
-./test -v cli
-```
-
-View the usage:
-```
-./test -h
+CLI Tests:
+```bash
+./test.sh cli
 ```
