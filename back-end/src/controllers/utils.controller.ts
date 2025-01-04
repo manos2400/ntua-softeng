@@ -7,6 +7,11 @@ export const getStations = async (req: Request, res: Response) => {
     try {
         const stations = await Station.find();
 
+        if(stations.length === 0) {
+            res.status(204).send();
+            return;
+        }
+
         const stationData = stations.map(station => ({
             id: station.id,
             name: station.name
@@ -23,6 +28,10 @@ export const getOperators = async (req: Request, res: Response) => {
     try {
         const operators = await Operator.find();
 
+        if(operators.length === 0) {
+            res.status(204).send();
+            return;
+        }
 
         const operatorData = operators.map(operator => ({
             id: operator.id,

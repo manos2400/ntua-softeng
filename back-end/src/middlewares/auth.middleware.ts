@@ -17,6 +17,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction):
         req.user = jwt.verify(token, secretKey);
         next();
     } catch (err) {
-        res.status(403).json({ message: 'Forbidden: Invalid token' });
+        res.status(401).json({ message: 'Unauthorized: Invalid token' });
     }
 };

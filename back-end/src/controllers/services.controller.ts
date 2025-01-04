@@ -31,7 +31,10 @@ export const getTollStationPasses = async (req: Request, res: Response) => {
             where: { station, timestamp: Between(new Date(periodFrom), new Date(periodTo)) },
             relations: ['tag', 'tag.operator'],
         });
-
+        if(passes.length === 0) {
+            res.status(204).send();
+            return;
+        }
         if(req.query.format === 'csv') {
             const richPasses = passes.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()).map(pass => `${station.id},${station.operator.id},${new Date().toISOString()},${periodFrom},${periodTo},${passes.length},${pass.id},${pass.timestamp.toISOString()},${pass.tag.id},${pass.tag.operator.id},${pass.paid ? 'home' : 'visitor'},${pass.charge}`);
             const csv = createCsv('stationID,stationOperator,requestTimestamp,periodFrom,periodTo,n_passes,passID,timestamp,tagID,tagProvider,passType,passCharge', richPasses);
@@ -85,6 +88,11 @@ export const getPassAnalysis = async (req: Request, res: Response) => {
              },
             relations: ['tag', 'station'],
         });
+
+        if(passes.length === 0) {
+            res.status(204).send();
+            return;
+        }
 
         if(req.query.format === 'csv') {
             const richPasses = passes.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()).map(pass => `${stationOpID},${tagOpID},${new Date().toISOString()},${periodFrom},${periodTo},${passes.length},${pass.id},${pass.station.id},${pass.timestamp.toISOString()},${pass.tag.id},${pass.charge}`);
@@ -160,6 +168,11 @@ export const getChargesBy = async (req: Request, res: Response) => {
             passesCost: passesCost.toFixed(2),
         }));
 
+
+        if(vOpList.length === 0) {
+            res.status(204).send();
+            return;
+        }
 
         if(req.query.format === 'csv') {
             const richVopList = vOpList.map(vop => `${tollOpID},${new Date().toISOString()},${periodFrom},${periodTo},${vop.visitingOpID},${vop.nPasses},${vop.passesCost}`);
@@ -276,6 +289,11 @@ export const getDebt = async (req: Request, res: Response) => {
             passesCost: passesCost.toFixed(2),
         }));
 
+        if(hOpList.length === 0) {
+            res.status(204).send();
+            return;
+        }
+
         if(req.query.format === 'csv') {
             const richVopList = hOpList.map(hop => `${tagOpID},${new Date().toISOString()},${periodFrom},${periodTo},${hop.homeOpID},${hop.nPasses},${hop.passesCost}`);
             const csv = createCsv('tagOpID,requestTimestamp,periodFrom,periodTo,homeOpID,n_passes,passesCost', richVopList);
@@ -355,7 +373,7 @@ export const getTollStats = async (req: Request, res: Response) => {
         });
 
         if (passes.length === 0) {
-            res.status(400).json({ error: 'No passes found in that time period' });
+            res.status(204).send();
             return;
         }
 
