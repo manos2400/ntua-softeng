@@ -11,21 +11,21 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            res.status(400).json({ message: 'Username and password are required' });
+            res.status(400).json({ error: 'Username and password are required' });
             return;
         }
 
         const user = await User.findOneBy({ username });
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            res.status(401).json({ message: 'Invalid username or password' });
+            res.status(401).json({ error: 'Invalid username or password' });
             return;
         }
 
         const token = jwt.sign({ username: user.username, role: user.isAdmin ? "admin" : "user" }, secretKey, { expiresIn: tokenExpiry });
         res.status(200).json({ token });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 

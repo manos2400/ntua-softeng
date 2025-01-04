@@ -20,6 +20,11 @@ export const getTollStationPasses = async (req: Request, res: Response) => {
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
 
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
+
     try {
         const station = await Station.findOne({ where: { id: tollStationID }, relations: ['operator'] });
         if (!station) {
@@ -70,6 +75,11 @@ export const getPassAnalysis = async (req: Request, res: Response) => {
     const { stationOpID, tagOpID, date_from, date_to } = req.params;
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
+
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
 
     try {
          const stationOp = await Operator.findOneBy({ id: stationOpID });
@@ -128,6 +138,11 @@ export const getChargesBy = async (req: Request, res: Response) => {
     const { tollOpID, date_from, date_to } = req.params;
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
+
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
 
     try {
         const tollOp = await Operator.findOneBy({ id: tollOpID });
@@ -200,6 +215,11 @@ export const getPassesCost = async (req: Request, res: Response) => {
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
 
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
+
     try {
         const tollOp = await Operator.findOneBy({ id: tollOpID });
         const tagOp = await Operator.findOneBy({ id: tagOpID });
@@ -248,6 +268,11 @@ export const getDebt = async (req: Request, res: Response) => {
     const { tagOpID, date_from, date_to } = req.params;
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
+
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
 
     try {
         const tagOp = await Operator.findOneBy({ id: tagOpID });
@@ -320,6 +345,16 @@ export const payDebt = async (req: Request, res: Response) => {
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
 
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
+
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
+
     try {
         const tollOp = await Operator.findOneBy({ id: tollOpID });
         const tagOp = await Operator.findOneBy({ id: tagOpID });
@@ -355,6 +390,11 @@ export const getTollStats = async (req: Request, res: Response) => {
     const { tollOpID, date_from, date_to } = req.params;
     const periodFrom = formatDate(date_from);
     const periodTo = formatDate(date_to);
+
+    if(new Date(periodFrom) > new Date(periodTo)) {
+        res.status(400).json({ error: 'Invalid date range' });
+        return;
+    }
 
     try {
         const tollOp = await Operator.findOneBy({ id: tollOpID });

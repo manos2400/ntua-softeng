@@ -60,7 +60,7 @@ async function callApi(endpoint, method = 'GET', data = null, requiresAuth = fal
         return response;
     } catch (error) {
         if (error.response) {
-            console.error(`Error: ${error.response.status} - ${error.response.data.message}`);
+            console.error(`Error: ${error.response.status} - ${error.response.data.error}`);
         } else {
             console.error(`Error: ${error.message}`);
         }
