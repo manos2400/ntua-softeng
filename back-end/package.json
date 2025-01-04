@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "generate": "ts-node src/generate.ts"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
