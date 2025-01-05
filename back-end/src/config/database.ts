@@ -8,11 +8,11 @@ import { User } from "../entities/user.entity";
 
 export const dataSource = new DataSource({
     type: "postgres",
-    host: "localhost",
+    host: process.env.DB_HOST || "localhost",
     port: 5432,
-    username: "softeng",
-    password: "softeng2024",
-    database: "tolls",
+    username: process.env.DB_USER || "softeng",
+    password: process.env.DB_PASS || "softeng2024",
+    database: process.env.DB_NAME || "tolls",
     entities: [Operator, Pass, Station, Tag, User],
     synchronize: true,
 });

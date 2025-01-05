@@ -1,6 +1,7 @@
 import app from './app';
 import { dataSource } from "./config/database";
 import 'reflect-metadata';
+import 'dotenv/config';
 
 const PORT = process.env.PORT || 9115;
 

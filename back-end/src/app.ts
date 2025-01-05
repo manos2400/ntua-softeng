@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
-const swaggerDocument = YAML.parse(fs.readFileSync(__dirname + '/../../documentation/openapi.yaml', 'utf-8'));
+const swaggerDocument = YAML.parse(fs.readFileSync(__dirname + '/../openapi.yaml', 'utf-8'));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:9115/api';
+const API_BASE = `${window.location.origin}/api`;
 
 // get auth token from cookie
 function getToken(){
@@ -25,11 +25,11 @@ async function apiRequest(url, method = 'GET', data = null, output_format = 'jso
 
     const response = await fetch(`${API_BASE}/${url}`, options);
 
-    if(response.status == 204) {
+    if(response.status === 204) {
         return {'error': 'No data'};
     }
 
-    if(output_format == 'json'){
+    if(output_format === 'json'){
         if (!response.ok) {
             const error = await response.json();
             const errorMessage = error.message || error.error || `${response.status}`;
@@ -77,15 +77,15 @@ async function fileRequest(url, data) {
 
 // quick styled messages for UI
 function msg(container,type,txt=""){
-    if(type=="loading"){
+    if(type==="loading"){
         container.innerHTML = '<progress class="progress is-medium is-info" max="100">60%</progress>';
         return;
     }
     const article = document.createElement('article');
     article.classList.add('message');
-    if(type=="error") article.classList.add('is-danger');
-    if(type=="success") article.classList.add('is-success');
-    if(type=="warn") article.classList.add('is-warning');
+    if(type==="error") article.classList.add('is-danger');
+    if(type==="success") article.classList.add('is-success');
+    if(type==="warn") article.classList.add('is-warning');
     const div = document.createElement('div');
     div.classList.add('message-body');
     div.innerHTML = txt;

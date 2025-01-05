@@ -1,7 +1,9 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+require('dotenv').config();
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+let token;
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
