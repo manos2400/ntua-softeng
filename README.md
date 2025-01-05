@@ -26,8 +26,8 @@ curl -X POST -k https://localhost:9115/api/admin/resetpasses
 ```
 or our CLI client:
 ```bash
-./cli.js resetstations
-./cli.js resetpasses
+./se2456 resetstations
+./se2456 resetpasses
 ```
 
 ### Access
@@ -40,8 +40,7 @@ The API is available at [https://localhost:9115/api](https://localhost:9115/api)
 The CLI client is given in the `cli-client` directory. You can use it like this:
 ```bash
 cd cli-client
-npm install # (once)
-./cli.js --help
+./se2456 --help
 ```
 
 ## More features

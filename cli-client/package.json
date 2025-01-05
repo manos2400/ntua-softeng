@@ -1,10 +1,17 @@
 {
-  "name": "cli-client",
+  "name": "se2456",
   "version": "1.0.0",
   "description": "",
   "main": "cli.js",
   "scripts": {
     "start": "node cli.js"
+  },
+  "bin": "./cli.js",
+  "pkg": {
+    "scripts": ["./cli.js"],
+    "assets": [
+      "node_modules/axios/**"
+    ]
   },
   "keywords": [],
   "author": "",
