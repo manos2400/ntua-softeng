@@ -16,7 +16,7 @@ The project focuses on interoperability in highway toll systems, analyzing toll 
 
 Build the docker images and launch the containers:
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 After the **first** launch, you need to initialize the database, with the following calls to the API. You can use curl, Postman (or other GUI tools): 
