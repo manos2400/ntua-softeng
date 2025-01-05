@@ -1,0 +1,50 @@
+services:
+  tolls-frontend:
+    build:
+      context: ./front-end/
+      target: tolls-frontend
+    container_name: tolls-frontend
+    restart: always
+    environment:
+      - PORT=3000
+      - BACKEND_URL=http://tolls-backend:9115
+    depends_on:
+      - tolls-backend
+  tolls-backend:
+    build:
+      context: ./back-end/
+      target: tolls-backend
+    container_name: tolls-backend
+    restart: always
+    environment:
+      - PORT=9115
+      - DB_HOST=tolls-db
+      - DB_USER=softeng
+      - DB_PASSWORD=softeng2024
+      - DB_NAME=tolls
+    depends_on:
+      - tolls-db
+  tolls-db:
+    image: postgres:alpine
+    restart: always
+    container_name: tolls-db
+    environment:
+      POSTGRES_DB: tolls
+      POSTGRES_USER: softeng
+      POSTGRES_PASSWORD: softeng2024
+    ports:
+      - "5432:5432"
+    volumes:
+      - tolls-data:/var/lib/postgresql/data
+  proxy:
+    image: nginx:alpine
+    container_name: proxy
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl
+    ports:
+      - "9115:9115"
+
+volumes:
+  tolls-data:

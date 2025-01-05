@@ -9,43 +9,40 @@ The project focuses on interoperability in highway toll systems, analyzing toll 
 
 ### Prerequisites
 
+- Docker
 - Linux
-- Node.js | `node -v`
-- npm | `npm -v` | `sudo apt install npm`
-- pnpm | `pnpm -v` | `curl -fsSL https://get.pnpm.io/install.sh | sh -`
 
 ### Launch
 
-Launch the back-end and the database:
+Build the docker images and launch the containers:
 ```bash
-cd database
-docker compose up -d
-cd ../back-end
-pnpm install
-pnpm run dev
+docker-compose up -d --build
 ```
 
-After back-end launches and successfully connects to the database, initialize the database by adding the first (admin) user. In a new terminal:
+After the **first** launch, you need to initialize the database, with the following calls to the API. You can use curl, Postman (or other GUI tools): 
 ```bash
-curl -X POST http://localhost:9115/api/admin/resetpasses
+curl -X POST -k https://localhost:9115/api/admin/resetstations
+curl -X POST -k https://localhost:9115/api/admin/resetpasses
+```
+or our CLI client:
+```bash
+./cli.js resetstations
+./cli.js resetpasses
 ```
 
-If you intend to use the CLI, make sure you have commander installed:
+### Access
+
+#### Web Application 
+The Web Application is available at [https://localhost:9115](https://localhost:9115)
+#### API
+The API is available at [https://localhost:9115/api](https://localhost:9115/api)
+#### CLI
+The CLI client is given in the `cli-client` directory. You can use it like this:
 ```bash
 cd cli-client
-npm install commander
+npm install # (once)
+./cli.js --help
 ```
-
-Launch the front-end:
-```bash
-cd front-end
-npm init -y # creates package.json (once)
-npm install express ejs cookie-parser # (once)
-node server.js # start
-```
-
-Go to [https://localhost:3000](https://localhost:3000)
-
 
 ## More features
 
@@ -60,13 +57,5 @@ After you have launched the back-end and the database, and initialized the datab
 cd testing
 ./test.sh api
 ./test.sh cli
-```
-
-### CLI
-
-You can use the CLI like this:
-```bash
-cd cli-client
-./cli.js healthcheck
 ```
 
