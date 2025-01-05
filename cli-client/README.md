@@ -8,5 +8,5 @@ npm install commander
 
 You can use the CLI like this:
 ```bash
-./cli.js healthcheck # example
+./se2456 --help
 ```

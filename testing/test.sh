@@ -10,14 +10,14 @@ TEST_TYPE=$1
 if [ "$TEST_TYPE" == "api" ]; then
     
     echo "Part 1 Testing (no passes in database):"
-    python3 -m unittest tests/api_1.py
+    PYTHONWARNINGS="ignore" python3 -m unittest tests/api_1.py
     if [ $? -ne 0 ]; then
         echo "tests/api_1.py failed."
         exit 1
     fi
 
     echo "Part 2 Testing (database populated with passes):"
-    python3 -m unittest tests/api_2.py
+    PYTHONWARNINGS="ignore" python3 -m unittest tests/api_2.py
     if [ $? -ne 0 ]; then
         echo "tests/api_2.py failed."
         exit 1
@@ -26,21 +26,21 @@ if [ "$TEST_TYPE" == "api" ]; then
 elif [ "$TEST_TYPE" == "cli" ]; then
     
     echo "Part 1 Testing (no passes in database):"
-    python3 -m unittest tests.cli_1
+    PYTHONWARNINGS="ignore" python3 -m unittest tests.cli_1
     if [ $? -ne 0 ]; then
         echo "tests/cli_1.py failed."
         exit 1
     fi
 
     echo "Part 2 Testing (database populated with passes):"
-    python3 -m unittest tests/cli_2.py
+    PYTHONWARNINGS="ignore" python3 -m unittest tests/cli_2.py
     if [ $? -ne 0 ]; then
         echo "tests/cli_2.py failed."
         exit 1
     fi
 
     echo "Part 3 Testing (logout tests):"
-    python3 -m unittest tests/cli_3.py
+    PYTHONWARNINGS="ignore" python3 -m unittest tests/cli_3.py
     if [ $? -ne 0 ]; then
         echo "tests/cli_3.py failed."
         exit 1
