@@ -22,6 +22,7 @@ services:
       - DB_USER=softeng
       - DB_PASSWORD=softeng2024
       - DB_NAME=tolls
+      - JWT_SECRET=softeng2024
     depends_on:
       - tolls-db
   tolls-db:
