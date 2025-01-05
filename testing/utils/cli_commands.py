@@ -11,6 +11,7 @@ def get_token():
         f"{config.API_URL}/login",
         headers={"Content-Type": "application/x-www-form-urlencoded"},
         data=f"username={username}&password={password}",
+        verify=False
     )
     if response.status_code == 200:
         return response.json().get("token")

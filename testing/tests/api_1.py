@@ -15,7 +15,7 @@ class API(unittest.TestCase):
         cls.api_client = Reqs()
         cls.token = get_token_from_login()  # Store the token at the class level
         cls.assertIsNotNone(cls.token, "Login failed, no token received")  # Use cls to refer to class attributes
-        response = requests.post(f"{config.API_URL}/admin/resetpasses")
+        response = requests.post(f"{config.API_URL}/admin/resetpasses", verify=False)
         if response.json().get('status') != 'OK':
             print("Failed to reset passes")
             exit(1)
@@ -23,7 +23,7 @@ class API(unittest.TestCase):
     # ~~~~~~~~~~~~~~~~~~~~~ HEALTH CHECK ~~~~~~~~~~~~~~~~~~~~~ #
     
     def test_healthcheck(self):
-        response = requests.get(f"{config.API_URL}/admin/healthcheck")
+        response = requests.get(f"{config.API_URL}/admin/healthcheck", verify=False)
         if response.status_code == 200:
             json_response = response.json()
             self.assertIn('n_stations', json_response)
@@ -42,7 +42,7 @@ class API(unittest.TestCase):
     # ~~~~~~~~~~~~~~~~~~~~~ RESET PASSES ~~~~~~~~~~~~~~~~~~~~~ #
     
     def test_resetpasses(self):
-        response = requests.post(f"{config.API_URL}/admin/resetpasses")
+        response = requests.post(f"{config.API_URL}/admin/resetpasses", verify=False)
         if response.status_code == 200:
             json_response = response.json()
             self.assertEqual(json_response.get('status'), 'OK')
@@ -63,7 +63,7 @@ class API(unittest.TestCase):
     # ~~~~~~~~~~~~~~~~~~~~~ RESET STATIONS ~~~~~~~~~~~~~~~~~~~~~ #
     
     def test_resetstations(self):
-        response = requests.post(f"{config.API_URL}/admin/resetstations")
+        response = requests.post(f"{config.API_URL}/admin/resetstations", verify=False)
         if response.status_code == 200:
             json_response = response.json()
             self.assertEqual(json_response.get('status'), 'OK')
@@ -573,7 +573,7 @@ class API(unittest.TestCase):
         self.assertEqual(status_code, 200)
         self.assertEqual(response_json["status"], "OK")
         # then, reset passes again to continue testing without them:
-        response = requests.post(f"{config.API_URL}/admin/resetpasses")
+        response = requests.post(f"{config.API_URL}/admin/resetpasses", verify=False)
         if response.json().get('status') != 'OK':
             print("Failed to reset passes (2)")
             exit(1)

@@ -17,7 +17,7 @@ class API(unittest.TestCase):
         cls.api_client = Reqs()
         cls.token = get_token_from_login()  # Store the token at the class level
         cls.assertIsNotNone(cls.token, "Login failed, no token received")  # Use cls to refer to class attributes
-        response = requests.post(f"{config.API_URL}/admin/resetpasses")
+        response = requests.post(f"{config.API_URL}/admin/resetpasses", verify=False)
         if response.json().get('status') != 'OK':
             print("Failed to reset passes")
             exit(1)
@@ -33,7 +33,7 @@ class API(unittest.TestCase):
     # ~~~~~~~~~~~~~~~~~~~~~ POPULATED TESTS ~~~~~~~~~~~~~~~~~~~~~ #
     
     def test_healthcheck_populated(self):
-        response = requests.get(f"{config.API_URL}/admin/healthcheck")
+        response = requests.get(f"{config.API_URL}/admin/healthcheck", verify=False)
         if response.status_code == 200:
             json_response = response.json()
             self.assertIn('n_stations', json_response)

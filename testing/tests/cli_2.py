@@ -1,5 +1,4 @@
 import unittest
-import requests
 import os
 
 import utils.config as config

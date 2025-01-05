@@ -5,9 +5,10 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
+const https = require('https');
 
 const program = new Command();
-const API_BASE_URL = 'http://localhost:9115/api';
+const API_BASE_URL = 'https://localhost:9115/api';
 const TOKEN_FILE = path.join(require('os').homedir(), '.se2456_token.json');
 
 // Helper function to read the saved token
@@ -51,6 +52,9 @@ async function callApi(endpoint, method = 'GET', data = null, requiresAuth = fal
             method,
             data,
             headers,
+            httpsAgent: new https.Agent({
+                rejectUnauthorized: false
+            })
         });
         if(endpoint.endsWith('csv')) {
             console.log(response.data);
@@ -62,7 +66,7 @@ async function callApi(endpoint, method = 'GET', data = null, requiresAuth = fal
         if (error.response) {
             console.error(`Error: ${error.response.status} - ${error.response.data.error}`);
         } else {
-            console.error(`Error: ${error.message}`);
+            console.error(`Error: ${error}`);
         }
     }
 }

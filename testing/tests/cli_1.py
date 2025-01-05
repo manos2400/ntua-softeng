@@ -15,7 +15,7 @@ class CLI(unittest.TestCase):
     def setUpClass(cls):
         cls.token = get_token()
         cls.assertIsNotNone(cls.token, "Login failed, no token received")
-        response = requests.post(f"{config.API_URL}/admin/resetpasses")
+        response = requests.post(f"{config.API_URL}/admin/resetpasses", verify=False)
         if response.json()['status'] != 'OK':
             print("Failed to reset passes")
             exit(1)
@@ -311,7 +311,7 @@ class CLI(unittest.TestCase):
         self.assertEqual(out['status'], "OK")
 
         # reset, for this testing part
-        response = requests.post(f"{config.API_URL}/admin/resetpasses")
+        response = requests.post(f"{config.API_URL}/admin/resetpasses", verify=False)
         if response.json()['status'] != 'OK':
             print("Failed to reset passes")
             exit(1)
