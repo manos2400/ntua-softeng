@@ -2,7 +2,7 @@ FROM node:20.13.0-alpine as tolls-backend
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
 
 RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
