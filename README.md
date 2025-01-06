@@ -53,7 +53,7 @@ After you have launched the back-end, you can access the OpenAPI documentation a
 
 After you have launched the back-end and the database, and initialized the database, you can run the tests:
 ```bash
-cd testing
+cd test
 ./test.sh api
 ./test.sh cli
 ```
