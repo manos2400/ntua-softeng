@@ -24,7 +24,8 @@ services:
       - DB_NAME=tolls
       - JWT_SECRET=softeng2024
     depends_on:
-      - tolls-db
+      tolls-db:
+        condition: service_healthy
   tolls-db:
     image: postgres:alpine
     restart: always
@@ -37,6 +38,8 @@ services:
       - "5432:5432"
     volumes:
       - tolls-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U softeng -d postgres"]
   proxy:
     image: nginx:alpine
     container_name: proxy
