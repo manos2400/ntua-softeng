@@ -4,14 +4,13 @@ WORKDIR /app
 
 COPY package.json ./
 
-RUN npm install -g pnpm
-RUN pnpm install
+RUN npm install
 
 COPY . .
 
-RUN pnpm run build
-RUN pnpm prune --prod
+RUN npm run build
+RUN npm prune --prod
 
 COPY src/data/tollstations2024.csv dist/data/tollstations2024.csv
 
-CMD ["pnpm", "start"]
+CMD ["npm", "start"]
