@@ -3,7 +3,7 @@ info:
   title: Tolls API
   version: 0.1.1
 servers:
-  - url: http://localhost:9115
+  - url: https://localhost:9115
     description: Local server
 paths:
   /api/admin/healthcheck:
