@@ -30,6 +30,11 @@ app.use('/api/admin', adminRoutes);
 app.use('/api', authMiddleware, servicesRoutes);
 app.use('/api', authMiddleware, utilsRoutes);
 
+// Default Route (Not Found) empty response
+app.use((req, res) => {
+    res.status(404).json({});
+});
+
 // Error Middleware
 app.use(errorHandler);
 
